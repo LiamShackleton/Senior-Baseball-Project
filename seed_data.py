@@ -1,10 +1,3 @@
-"""Insert FAKE sample data so the app has something to display.
-
-Run once with:  python3 seed_data.py
-
-Everything here is made up. It exists to test the search and stats screens
-before real charts are being extracted.
-"""
 
 from db import get_connection
 

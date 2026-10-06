@@ -49,6 +49,10 @@ You are reading a handwritten baseball at-bat chart. Here is how it's laid out:
     numbers (e.g. "6-3" = fielded by shortstop, thrown to first base;
     "F7" = flyout to left field; "P6" = popout to shortstop;
     "E6" = error by shortstop; "FC" = fielder's choice).
+    - If you come across an at bat in which you read strikeout or walk, check to make sure that
+    the balls and strikes add up to that result. For example if you read walk but only two balls,
+    one of those must be inccorectly marked. If you read strikeout but only two strikes, one of those must be incorrectly marked.
+    Double check if that is the case. 
 
 Return ONLY valid JSON (no markdown formatting, no explanation text before
 or after) matching this exact structure:
@@ -135,7 +139,8 @@ def extract(image_path, dry_run=False):
 
     response = client.messages.create(
         model="claude-sonnet-5",
-        max_tokens=2000,
+        max_tokens=4096,
+        thinking={"type": "disabled"},
         system=SYSTEM_PROMPT,
         messages=[
             {
@@ -158,7 +163,15 @@ def extract(image_path, dry_run=False):
         ],
     )
 
-    raw_text = response.content[0].text
+    # The response can contain multiple blocks (e.g. reasoning before the
+    # actual answer), so find the text block instead of assuming it's first.
+    text_blocks = [block.text for block in response.content if block.type == "text"]
+    if not text_blocks:
+        print("No text block found in the response. Full response for debugging:")
+        print(response.content)
+        sys.exit(1)
+    raw_text = "".join(text_blocks)
+
     try:
         return json.loads(raw_text)
     except json.JSONDecodeError:
