@@ -34,7 +34,6 @@ CREATE TABLE players (
     bats            ENUM('L', 'R', 'S'),          -- S = switch
     throws          ENUM('L', 'R'),
     team            VARCHAR(100),
-    level           VARCHAR(50),                   -- e.g. 'Varsity', 'JV', 'College'
     notes           TEXT,
     created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
 

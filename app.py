@@ -5,7 +5,7 @@ import streamlit as st
 from db import run_query
 
 st.set_page_config(page_title="Baseball Charting", layout="wide")
-st.title("⚾ Baseball Charting")
+st.title("Baseball Charting")
 
 
 # ---------------------------------------------------------------------------

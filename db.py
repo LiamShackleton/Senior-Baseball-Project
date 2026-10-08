@@ -17,14 +17,11 @@ DB_CONFIG = {
 
 
 def get_connection():
-    """Open a plain connection (used for writing data)."""
     return pymysql.connect(**DB_CONFIG)
 
 
 def run_query(sql, params=None):
     """Run a SELECT and return the rows as a list of dictionaries.
-
-    Example row: {"first_name": "Jake", "last_name": "Miller", ...}
 
     Always pass values through `params` (they replace the %s markers in the
     SQL) instead of pasting them into the SQL string yourself. That keeps
