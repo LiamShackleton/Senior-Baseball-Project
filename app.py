@@ -1,3 +1,11 @@
+"""Baseball Charting: player search and stats viewer.
+
+Run with:  streamlit run app.py
+
+Streamlit re-runs this whole file from top to bottom every time you type in
+the search box or tick a checkbox. That's why there's no "submit" logic:
+the page simply redraws with whatever the widgets currently say.
+"""
 
 import pandas as pd
 import streamlit as st
@@ -5,7 +13,7 @@ import streamlit as st
 from db import run_query
 
 st.set_page_config(page_title="Baseball Charting", layout="wide")
-st.title("Baseball Charting")
+st.title("⚾ Baseball Charting")
 
 
 # ---------------------------------------------------------------------------
@@ -84,11 +92,12 @@ def hitter_log(pid):
     rows = run_query(
         """
         SELECT g.game_date, a.inning, a.outs_before,
-               CONCAT(pl.first_name, ' ', pl.last_name) AS pitcher,
+               COALESCE(NULLIF(TRIM(CONCAT(pl.first_name, ' ', pl.last_name)), ''),
+                        'not recorded') AS pitcher,
                a.result, a.scored, a.final_balls, a.final_strikes
         FROM at_bats a
         JOIN games g    ON a.game_id = g.game_id
-        JOIN players pl ON a.pitcher_id = pl.player_id
+        LEFT JOIN players pl ON a.pitcher_id = pl.player_id
         WHERE a.hitter_id = %s
         ORDER BY g.game_date, a.inning, a.at_bat_id
         """,

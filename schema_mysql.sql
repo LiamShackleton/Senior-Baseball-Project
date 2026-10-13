@@ -34,6 +34,7 @@ CREATE TABLE players (
     bats            ENUM('L', 'R', 'S'),          -- S = switch
     throws          ENUM('L', 'R'),
     team            VARCHAR(100),
+    level           VARCHAR(50),                   -- e.g. 'Varsity', 'JV', 'College'
     notes           TEXT,
     created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
 
@@ -65,6 +66,10 @@ CREATE TABLE games (
 CREATE TABLE source_charts (
     chart_id             INT AUTO_INCREMENT PRIMARY KEY,
     game_id              INT,
+    -- For 'pitching' charts: each chart is one pitcher's outing for the game,
+    -- so this identifies which pitcher the chart belongs to. NULL for
+    -- 'hitting' (at-bat) charts, which can cover multiple pitchers/batters.
+    pitcher_id           INT,
     chart_type           ENUM('pitching', 'hitting') NOT NULL,
     image_path           VARCHAR(500) NOT NULL,     -- file path or storage URL
     uploaded_at          DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -75,6 +80,7 @@ CREATE TABLE source_charts (
     notes                TEXT,
 
     FOREIGN KEY (game_id) REFERENCES games(game_id),
+    FOREIGN KEY (pitcher_id) REFERENCES players(player_id),
     INDEX idx_source_charts_status (extraction_status)
 ) ENGINE=InnoDB;
 
@@ -85,7 +91,7 @@ CREATE TABLE source_charts (
 CREATE TABLE at_bats (
     at_bat_id       INT AUTO_INCREMENT PRIMARY KEY,
     game_id         INT NOT NULL,
-    pitcher_id      INT NOT NULL,
+    pitcher_id      INT,    -- optional: at-bat charts don't record who pitched
     hitter_id       INT NOT NULL,
     source_chart_id INT,
 
@@ -107,6 +113,11 @@ CREATE TABLE at_bats (
 
     final_balls     TINYINT,
     final_strikes   TINYINT,
+
+    -- Did this batter eventually score as a baserunner during this at-bat's
+    -- time on base (regardless of how far they got or when)? Sourced from
+    -- the shaded diamond icon on the paper chart.
+    scored          BOOLEAN DEFAULT FALSE,
 
     notes           TEXT,
     created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -147,8 +158,11 @@ CREATE TABLE pitches (
     balls_before    TINYINT CHECK (balls_before BETWEEN 0 AND 3),
     strikes_before  TINYINT CHECK (strikes_before BETWEEN 0 AND 2),
 
-    result          VARCHAR(30) NOT NULL,   -- e.g. 'called_strike', 'swinging_strike', 'ball',
-                                             -- 'foul', 'in_play', 'hit_by_pitch'
+    result          VARCHAR(30) NOT NULL,   -- Level of detail depends on source chart:
+                                             -- at-bat charts (X's, top=strike/bottom=ball)
+                                             -- only support 'ball' / 'strike'. Charts with
+                                             -- more detail can use 'called_strike',
+                                             -- 'swinging_strike', 'foul', 'in_play', etc.
 
     notes           TEXT,
     created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
