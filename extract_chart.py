@@ -205,6 +205,20 @@ def extract_rows(client, strips):
         return merge_rows(list(pool.map(read_row, enumerate(strips, start=1))))
 
 
+def fix_count(ab):
+    """Make the count agree with the result when the result is a walk or strikeout.
+    - BB is always exactly 4 balls.
+    - K is at least 3 strikes. More than 3 is left alone, since fouls with two
+      strikes add extra X's.
+    The model's original count is kept in ab["original_count"] so the change is visible."""
+    code = (str(ab.get("result") or "").upper().split() or [""])[-1]
+    balls, strikes = ab.get("balls"), ab.get("strikes")
+    if code == "BB" and balls != 4:
+        ab["original_count"], ab["balls"] = f"{balls}-{strikes}", 4
+    elif code == "K" and (strikes is None or strikes < 3):
+        ab["original_count"], ab["strikes"] = f"{balls}-{strikes}", 3
+
+
 def merge_rows(rows):
     """Combine the rows into one result. Anything past the printed number of
     boxes is dropped, and unused boxes at the right are trimmed."""
@@ -215,6 +229,8 @@ def merge_rows(rows):
         at_bats = list(row.get("at_bats", []))[:COLUMNS]
         for number, ab in enumerate(at_bats, start=1):
             ab["column"] = number  # trust the position, not the model's numbering
+            if not ab.get("box_blank"):
+                fix_count(ab)
         while at_bats and at_bats[-1].get("box_blank"):
             at_bats.pop()
         batter = {"name": row.get("name"), "at_bats": at_bats}
@@ -268,6 +284,9 @@ def check_result(result):
                 warnings.append(f"{where}: walk (BB) but {balls} balls")
             if code == "K" and strikes is not None and strikes < 3:
                 warnings.append(f"{where}: strikeout (K) but {strikes} strikes")
+            if ab.get("original_count"):
+                warnings.append(f"{where}: count changed from {ab['original_count']} to "
+                                f"{ab.get('balls')}-{ab.get('strikes')} to match the {code}")
             if ab.get("uncertain"):
                 warnings.append(f"{where}: marked uncertain by the model")
 
@@ -276,6 +295,32 @@ def check_result(result):
                 warnings.append(f"{where}: identical to column {previous[1]} (possible duplicate read)")
             previous = (signature, ab.get("column", "?"))
     return warnings
+
+
+def print_summary(result, max_warnings=12):
+    """Short readout: one line per batter, then the first few warnings.
+    Format of each at-bat:  RESULT balls-strikes
+    (R = scored, ? = model was unsure, * = count was corrected to match a BB or K)"""
+    for batter in result["batters"]:
+        boxes = []
+        for ab in batter["at_bats"]:
+            if ab.get("box_blank"):
+                boxes.append("--")
+            else:
+                mark = ("*" if ab.get("original_count") else "") + ("?" if ab.get("uncertain") else "")
+                scored = " R" if ab.get("scored") else ""
+                boxes.append(f"{ab.get('result') or '??'} {ab.get('balls')}-{ab.get('strikes')}{mark}{scored}")
+        print(f"{(batter.get('name') or '?'):<10} " + " | ".join(boxes))
+
+    warnings = check_result(result)
+    if not warnings:
+        print("\nNo consistency problems found.")
+        return
+    print(f"\n{len(warnings)} things to check:")
+    for warning in warnings[:max_warnings]:
+        print(" -", warning)
+    if len(warnings) > max_warnings:
+        print(f" ... and {len(warnings) - max_warnings} more (import_chart.py shows them all).")
 
 
 # ---------------------------------------------------------------------------
@@ -299,20 +344,14 @@ def main():
         return
 
     result = extract_rows(make_client(), strips)
-    print(json.dumps(result, indent=2))
-
-    warnings = check_result(result)
-    print(f"\n--- {len(result['batters'])} batters, "
-          f"{result['layout']['columns_with_writing']} at-bats each ---")
-    for warning in warnings:
-        print(" -", warning)
-    if not warnings:
-        print("No consistency problems found.")
 
     out = Path("extracted") / f"{path.stem}.json"
     out.parent.mkdir(exist_ok=True)
     out.write_text(json.dumps({"source_image": str(path), **result}, indent=2))
-    print(f"\nSaved to {out}. Next: python3 import_chart.py {out}")
+
+    print_summary(result)
+    print(f"\nFull details (including the model's notes) are in {out}.")
+    print(f"Next: python3 import_chart.py {out}")
 
 
 if __name__ == "__main__":
