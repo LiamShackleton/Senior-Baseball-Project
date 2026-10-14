@@ -8,13 +8,13 @@
     {
       "batting_order": 1,
       "jersey_number": null,
-      "name": "Lawrence",
+      "name": "William Lawrence",
       "at_bats": [
         {
           "column": 1,
           "box_blank": false,
-          "balls": null,
-          "strikes": null,
+          "balls": 2,
+          "strikes": 1,
           "result": "1B",
           "scored": true,
           "uncertain": true
@@ -23,7 +23,7 @@
           "column": 2,
           "box_blank": false,
           "balls": 2,
-          "strikes": null,
+          "strikes": 1,
           "result": "1B",
           "scored": true,
           "uncertain": true
@@ -31,8 +31,8 @@
         {
           "column": 3,
           "box_blank": false,
-          "balls": null,
-          "strikes": null,
+          "balls": 2,
+          "strikes": 0,
           "result": "2B",
           "scored": false,
           "uncertain": true
@@ -40,8 +40,8 @@
         {
           "column": 4,
           "box_blank": false,
-          "balls": 1,
-          "strikes": null,
+          "balls": 0,
+          "strikes": 1,
           "result": "3B",
           "scored": false,
           "uncertain": true
@@ -49,17 +49,17 @@
         {
           "column": 5,
           "box_blank": false,
-          "balls": 1,
-          "strikes": null,
+          "balls": 2,
+          "strikes": 0,
           "result": "1B",
-          "scored": true,
+          "scored": false,
           "uncertain": true
         },
         {
           "column": 6,
           "box_blank": false,
-          "balls": null,
-          "strikes": 3,
+          "balls": 0,
+          "strikes": 1,
           "result": "FC 6-3",
           "scored": false,
           "uncertain": true
@@ -67,38 +67,38 @@
         {
           "column": 7,
           "box_blank": false,
-          "balls": null,
-          "strikes": 1,
+          "balls": 3,
+          "strikes": 0,
           "result": "HBP",
-          "scored": true,
+          "scored": false,
           "uncertain": true
         },
         {
           "column": 8,
           "box_blank": false,
-          "balls": null,
-          "strikes": 3,
+          "balls": 1,
+          "strikes": 0,
           "result": "HBP",
-          "scored": true,
+          "scored": false,
           "uncertain": true
         },
         {
           "column": 9,
           "box_blank": false,
-          "balls": 4,
-          "strikes": 1,
+          "balls": 0,
+          "strikes": 3,
           "result": "K",
           "scored": false,
-          "uncertain": true
+          "uncertain": false
         },
         {
           "column": 10,
-          "box_blank": true,
-          "balls": null,
-          "strikes": null,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 0,
           "result": null,
-          "scored": null,
-          "uncertain": false
+          "scored": false,
+          "uncertain": true
         }
       ]
     },
@@ -112,7 +112,7 @@
           "box_blank": false,
           "balls": 1,
           "strikes": null,
-          "result": null,
+          "result": "B",
           "scored": null,
           "uncertain": true
         },
@@ -121,7 +121,7 @@
           "box_blank": false,
           "balls": 1,
           "strikes": null,
-          "result": null,
+          "result": "B",
           "scored": null,
           "uncertain": true
         },
@@ -130,7 +130,7 @@
           "box_blank": false,
           "balls": 1,
           "strikes": null,
-          "result": null,
+          "result": "B",
           "scored": null,
           "uncertain": true
         },
@@ -139,7 +139,7 @@
           "box_blank": false,
           "balls": 1,
           "strikes": null,
-          "result": null,
+          "result": "B",
           "scored": null,
           "uncertain": true
         },
@@ -148,7 +148,7 @@
           "box_blank": false,
           "balls": 1,
           "strikes": null,
-          "result": null,
+          "result": "B/3",
           "scored": null,
           "uncertain": true
         },
@@ -157,7 +157,7 @@
           "box_blank": false,
           "balls": 1,
           "strikes": null,
-          "result": null,
+          "result": "BP",
           "scored": null,
           "uncertain": true
         },
@@ -175,18 +175,18 @@
           "box_blank": false,
           "balls": 1,
           "strikes": null,
-          "result": "BP",
+          "result": null,
           "scored": null,
           "uncertain": true
         },
         {
           "column": 9,
-          "box_blank": false,
-          "balls": 1,
+          "box_blank": true,
+          "balls": null,
           "strikes": null,
           "result": null,
           "scored": null,
-          "uncertain": true
+          "uncertain": false
         },
         {
           "column": 10,
@@ -202,13 +202,13 @@
     {
       "batting_order": 3,
       "jersey_number": null,
-      "name": null,
+      "name": "Unknown",
       "at_bats": [
         {
           "column": 1,
           "box_blank": false,
           "balls": 1,
-          "strikes": 1,
+          "strikes": 2,
           "result": "F7",
           "scored": false,
           "uncertain": true
@@ -220,7 +220,7 @@
           "strikes": 2,
           "result": "K",
           "scored": false,
-          "uncertain": true
+          "uncertain": false
         },
         {
           "column": 3,
@@ -234,9 +234,9 @@
         {
           "column": 4,
           "box_blank": false,
-          "balls": 2,
+          "balls": 1,
           "strikes": 1,
-          "result": "4-3",
+          "result": "4-",
           "scored": false,
           "uncertain": true
         },
@@ -244,10 +244,10 @@
           "column": 5,
           "box_blank": false,
           "balls": 2,
-          "strikes": 2,
+          "strikes": 3,
           "result": "K",
           "scored": false,
-          "uncertain": true
+          "uncertain": false
         },
         {
           "column": 6,
@@ -265,7 +265,7 @@
           "strikes": 3,
           "result": "P6",
           "scored": false,
-          "uncertain": true
+          "uncertain": false
         },
         {
           "column": 8,
@@ -307,7 +307,7 @@
           "balls": null,
           "strikes": null,
           "result": "F7",
-          "scored": false,
+          "scored": null,
           "uncertain": true
         },
         {
@@ -316,7 +316,7 @@
           "balls": null,
           "strikes": null,
           "result": "K",
-          "scored": false,
+          "scored": null,
           "uncertain": true
         },
         {
@@ -324,8 +324,8 @@
           "box_blank": false,
           "balls": null,
           "strikes": null,
-          "result": null,
-          "scored": false,
+          "result": "1B",
+          "scored": null,
           "uncertain": true
         },
         {
@@ -333,8 +333,8 @@
           "box_blank": false,
           "balls": null,
           "strikes": null,
-          "result": "1B",
-          "scored": false,
+          "result": "4-3",
+          "scored": null,
           "uncertain": true
         },
         {
@@ -342,8 +342,8 @@
           "box_blank": false,
           "balls": null,
           "strikes": null,
-          "result": "4-3",
-          "scored": false,
+          "result": "K",
+          "scored": null,
           "uncertain": true
         },
         {
@@ -352,7 +352,7 @@
           "balls": null,
           "strikes": null,
           "result": "K",
-          "scored": false,
+          "scored": null,
           "uncertain": true
         },
         {
@@ -360,8 +360,8 @@
           "box_blank": false,
           "balls": null,
           "strikes": null,
-          "result": "K",
-          "scored": false,
+          "result": "P6",
+          "scored": null,
           "uncertain": true
         },
         {
@@ -369,8 +369,8 @@
           "box_blank": false,
           "balls": null,
           "strikes": null,
-          "result": "P6",
-          "scored": false,
+          "result": "HBP",
+          "scored": null,
           "uncertain": true
         },
         {
@@ -378,31 +378,31 @@
           "box_blank": false,
           "balls": null,
           "strikes": null,
-          "result": "HBP",
-          "scored": false,
+          "result": "1B",
+          "scored": null,
           "uncertain": true
         },
         {
           "column": 10,
-          "box_blank": false,
+          "box_blank": true,
           "balls": null,
           "strikes": null,
-          "result": "1B",
-          "scored": false,
-          "uncertain": true
+          "result": null,
+          "scored": null,
+          "uncertain": false
         }
       ]
     },
     {
       "batting_order": 5,
       "jersey_number": null,
-      "name": "Unknown",
+      "name": "Illegible",
       "at_bats": [
         {
           "column": 1,
           "box_blank": false,
           "balls": 2,
-          "strikes": null,
+          "strikes": 0,
           "result": null,
           "scored": false,
           "uncertain": true
@@ -410,8 +410,8 @@
         {
           "column": 2,
           "box_blank": false,
-          "balls": 3,
-          "strikes": null,
+          "balls": 1,
+          "strikes": 0,
           "result": null,
           "scored": false,
           "uncertain": true
@@ -420,7 +420,7 @@
           "column": 3,
           "box_blank": false,
           "balls": 3,
-          "strikes": null,
+          "strikes": 1,
           "result": null,
           "scored": false,
           "uncertain": true
@@ -429,7 +429,7 @@
           "column": 4,
           "box_blank": false,
           "balls": 2,
-          "strikes": null,
+          "strikes": 1,
           "result": null,
           "scored": false,
           "uncertain": true
@@ -437,9 +437,9 @@
         {
           "column": 5,
           "box_blank": false,
-          "balls": 3,
-          "strikes": null,
-          "result": null,
+          "balls": 2,
+          "strikes": 2,
+          "result": "1",
           "scored": false,
           "uncertain": true
         },
@@ -447,7 +447,7 @@
           "column": 6,
           "box_blank": false,
           "balls": 2,
-          "strikes": null,
+          "strikes": 1,
           "result": null,
           "scored": false,
           "uncertain": true
@@ -455,8 +455,8 @@
         {
           "column": 7,
           "box_blank": false,
-          "balls": 2,
-          "strikes": null,
+          "balls": 1,
+          "strikes": 1,
           "result": null,
           "scored": false,
           "uncertain": true
@@ -465,7 +465,7 @@
           "column": 8,
           "box_blank": false,
           "balls": 3,
-          "strikes": null,
+          "strikes": 1,
           "result": null,
           "scored": true,
           "uncertain": true
@@ -473,8 +473,8 @@
         {
           "column": 9,
           "box_blank": false,
-          "balls": 2,
-          "strikes": null,
+          "balls": 1,
+          "strikes": 1,
           "result": null,
           "scored": false,
           "uncertain": true
@@ -493,22 +493,22 @@
     {
       "batting_order": 6,
       "jersey_number": null,
-      "name": null,
+      "name": "Unknown",
       "at_bats": [
         {
           "column": 1,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 2,
+          "balls": 0,
+          "strikes": 1,
           "result": "1B",
           "scored": false,
-          "uncertain": false
+          "uncertain": true
         },
         {
           "column": 2,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 4,
+          "balls": 4,
+          "strikes": 0,
           "result": "BB",
           "scored": false,
           "uncertain": true
@@ -516,17 +516,17 @@
         {
           "column": 3,
           "box_blank": false,
-          "balls": 1,
+          "balls": 0,
           "strikes": 3,
           "result": "K",
           "scored": false,
-          "uncertain": false
+          "uncertain": true
         },
         {
           "column": 4,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 4,
+          "balls": 4,
+          "strikes": 0,
           "result": "BB",
           "scored": false,
           "uncertain": true
@@ -534,26 +534,26 @@
         {
           "column": 5,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 2,
-          "result": "BB",
+          "balls": 0,
+          "strikes": 3,
+          "result": "K",
           "scored": false,
           "uncertain": true
         },
         {
           "column": 6,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 2,
-          "result": "K",
+          "balls": 4,
+          "strikes": 0,
+          "result": "BB",
           "scored": false,
           "uncertain": true
         },
         {
           "column": 7,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 2,
+          "balls": 0,
+          "strikes": 3,
           "result": "K",
           "scored": false,
           "uncertain": true
@@ -561,8 +561,8 @@
         {
           "column": 8,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 2,
+          "balls": 0,
+          "strikes": 3,
           "result": "K",
           "scored": false,
           "uncertain": true
@@ -570,11 +570,11 @@
         {
           "column": 9,
           "box_blank": false,
-          "balls": 1,
+          "balls": 0,
           "strikes": 1,
           "result": "F9",
           "scored": false,
-          "uncertain": false
+          "uncertain": true
         },
         {
           "column": 10,
@@ -590,55 +590,10 @@
     {
       "batting_order": 7,
       "jersey_number": null,
-      "name": "Unidentified Batter (row 7)",
+      "name": "Unreadable",
       "at_bats": [
         {
           "column": 1,
-          "box_blank": false,
-          "balls": 0,
-          "strikes": 1,
-          "result": null,
-          "scored": false,
-          "uncertain": true
-        },
-        {
-          "column": 2,
-          "box_blank": false,
-          "balls": 0,
-          "strikes": 1,
-          "result": null,
-          "scored": false,
-          "uncertain": true
-        },
-        {
-          "column": 3,
-          "box_blank": false,
-          "balls": 0,
-          "strikes": 1,
-          "result": null,
-          "scored": false,
-          "uncertain": true
-        },
-        {
-          "column": 4,
-          "box_blank": false,
-          "balls": 1,
-          "strikes": 1,
-          "result": null,
-          "scored": false,
-          "uncertain": true
-        },
-        {
-          "column": 5,
-          "box_blank": false,
-          "balls": 0,
-          "strikes": 1,
-          "result": null,
-          "scored": false,
-          "uncertain": true
-        },
-        {
-          "column": 6,
           "box_blank": true,
           "balls": null,
           "strikes": null,
@@ -647,12 +602,57 @@
           "uncertain": false
         },
         {
-          "column": 7,
+          "column": 2,
+          "box_blank": true,
+          "balls": null,
+          "strikes": null,
+          "result": null,
+          "scored": null,
+          "uncertain": false
+        },
+        {
+          "column": 3,
           "box_blank": false,
-          "balls": 0,
+          "balls": null,
           "strikes": 1,
           "result": null,
-          "scored": false,
+          "scored": null,
+          "uncertain": true
+        },
+        {
+          "column": 4,
+          "box_blank": true,
+          "balls": null,
+          "strikes": null,
+          "result": null,
+          "scored": null,
+          "uncertain": false
+        },
+        {
+          "column": 5,
+          "box_blank": false,
+          "balls": null,
+          "strikes": 1,
+          "result": null,
+          "scored": null,
+          "uncertain": true
+        },
+        {
+          "column": 6,
+          "box_blank": false,
+          "balls": null,
+          "strikes": 1,
+          "result": null,
+          "scored": null,
+          "uncertain": true
+        },
+        {
+          "column": 7,
+          "box_blank": false,
+          "balls": null,
+          "strikes": 1,
+          "result": null,
+          "scored": null,
           "uncertain": true
         },
         {
@@ -667,20 +667,20 @@
         {
           "column": 9,
           "box_blank": false,
-          "balls": 2,
-          "strikes": 0,
+          "balls": null,
+          "strikes": 1,
           "result": null,
-          "scored": false,
+          "scored": null,
           "uncertain": true
         },
         {
           "column": 10,
-          "box_blank": true,
-          "balls": null,
+          "box_blank": false,
+          "balls": 2,
           "strikes": null,
           "result": null,
           "scored": null,
-          "uncertain": false
+          "uncertain": true
         }
       ]
     },
@@ -763,28 +763,28 @@
         },
         {
           "column": 9,
+          "box_blank": false,
+          "balls": null,
+          "strikes": 2,
+          "result": "1-3",
+          "scored": false,
+          "uncertain": true
+        },
+        {
+          "column": 10,
           "box_blank": true,
           "balls": null,
           "strikes": null,
           "result": null,
           "scored": null,
           "uncertain": false
-        },
-        {
-          "column": 10,
-          "box_blank": false,
-          "balls": 0,
-          "strikes": 1,
-          "result": "1-3",
-          "scored": false,
-          "uncertain": true
         }
       ]
     },
     {
       "batting_order": 9,
       "jersey_number": null,
-      "name": "unreadable",
+      "name": "Unknown",
       "at_bats": [
         {
           "column": 1,
@@ -792,7 +792,7 @@
           "balls": null,
           "strikes": null,
           "result": null,
-          "scored": null,
+          "scored": false,
           "uncertain": true
         },
         {
@@ -801,7 +801,7 @@
           "balls": null,
           "strikes": null,
           "result": null,
-          "scored": null,
+          "scored": false,
           "uncertain": true
         },
         {
@@ -810,7 +810,7 @@
           "balls": null,
           "strikes": null,
           "result": null,
-          "scored": null,
+          "scored": false,
           "uncertain": true
         },
         {
@@ -819,7 +819,7 @@
           "balls": null,
           "strikes": null,
           "result": null,
-          "scored": null,
+          "scored": false,
           "uncertain": true
         },
         {
@@ -828,7 +828,7 @@
           "balls": null,
           "strikes": null,
           "result": null,
-          "scored": null,
+          "scored": false,
           "uncertain": true
         },
         {
@@ -837,7 +837,7 @@
           "balls": null,
           "strikes": null,
           "result": null,
-          "scored": null,
+          "scored": false,
           "uncertain": true
         },
         {
@@ -846,7 +846,7 @@
           "balls": null,
           "strikes": null,
           "result": null,
-          "scored": null,
+          "scored": false,
           "uncertain": true
         },
         {
@@ -855,16 +855,16 @@
           "balls": null,
           "strikes": null,
           "result": null,
-          "scored": null,
+          "scored": false,
           "uncertain": true
         },
         {
           "column": 9,
-          "box_blank": true,
+          "box_blank": false,
           "balls": null,
           "strikes": null,
-          "result": null,
-          "scored": null,
+          "result": "-3",
+          "scored": false,
           "uncertain": true
         },
         {
@@ -874,10 +874,10 @@
           "strikes": null,
           "result": null,
           "scored": null,
-          "uncertain": true
+          "uncertain": false
         }
       ]
     }
   ],
-  "notes": "Row 1: Image is heavily garbled/overlapping with faint handwriting; exact X counts for balls/strikes in several boxes could not be reliably determined. The batter's name at the left edge was mostly illegible, with only fragments ('iam', 'urenc') visible, possibly reading 'Lawrence' or similar, but this is highly uncertain. Jersey number not legible. Several result codes (1B, 2B, 3B, FC 6-3, HBP, K) were clear, but associated ball/strike tally marks were partially obscured or overlapping, so counts are approximate and flagged as uncertain throughout. | Row 2: The image strip is extremely narrow and only shows partial fragments of boxes - mostly a sliver of the top row (possibly result codes or neighboring row text like '3', 'B', 'BP') and a bottom row of X marks. The batter's name, lineup number, and jersey number are not visible in this crop. Result codes, strike counts, and scored diamond status could not be reliably determined due to severe cropping. All values are best-effort estimates and flagged as uncertain. | Row 3: Name and jersey number not visible in this cropped strip; only at-bat boxes shown. X-mark counts and exact result codes (especially box 4 '4-?' and box 7 'P6') are difficult to read precisely due to overlapping marks and image resolution; several boxes flagged uncertain as a result. | Row 4: The strip does not show the batter's name, lineup number, or jersey number - only the at-bat boxes are visible. The grid lines for balls/strikes X-marks are too small/unclear in this crop to reliably count individual X's, and diamond icon shading could not be clearly determined. All box results (text codes) were legible, but ball/strike counts and scored status are uncertain throughout. | Row 5: The strip is cropped so only the upper portion of each at-bat box is visible; the bottom rows containing result codes and much of the ball/strike grid are cut off. No name or jersey number is visible in this strip, so batting_order defaulted to 5 per instructions. X counts are approximate due to overlapping marks and partial visibility, and the shaded diamond in column 8 suggests that batter scored, but this is uncertain given the crop. | Row 6: Name and jersey number were not clearly visible in the cropped strip; batting order defaulted to 6 per instructions. Several boxes show strike/ball counts that don't match the expected totals for their result codes (e.g., BB with only 1 ball mark, K with only 2 strike marks); these are reported as seen and flagged uncertain. Diamond (scored) shading could not be reliably distinguished in this crop, so all were reported as not scored; this is uncertain as well. | Row 7: Image resolution/cropping made it difficult to clearly read diamond shading (scored status) and text result codes in each box; X counts are best estimates based on visible marks. No clear result codes (K, BB, hit, out) were legible in this strip, so result fields are null. Jersey number and full name are not visible in this cropped strip. | Row 8: This strip appears to be cut very narrowly, showing mostly the top edge of the at-bat boxes with little content visible. The batter's name, jersey number, and lineup number are not visible in this crop. Only one box (column 10) shows readable content: a single X mark (strike) and the result code '1-3' (fielded by pitcher, thrown to first base). The diamond icon for scoring status could not be clearly verified due to the thinness of the strip. Earlier columns appear blank but may have content cut off by the narrow crop. | Row 9: The image strip is extremely thin and shows only the tops of grid boxes with faint diamond-shaped marks; no legible name, jersey number, X marks, or result codes are visible. The content appears to be cut off, showing mostly blank space above the actual at-bat data row. A '-3' and '2' are visible at the top right but their meaning (possibly date or page info) is unclear and not part of the batter's row data."
+  "notes": "Row 1: The batter's name was mostly cropped out of this strip; only fragments ('iam', 'urenc', 'wren') are visible at the far right edge, reconstructed here as 'William Lawrence' with low confidence. X-mark counts in several boxes were hard to distinguish due to overlapping marks and crowding, especially in boxes 1-8; these are best estimates. The final box (column 10) contains only ball/strike marks with no result code, possibly an incomplete or in-progress at-bat. | Row 2: The image strip is extremely cropped, showing only a thin sliver of the row with partial text codes at the top of each box (possibly 'B', 'BP', etc.) and a single row of X marks at the bottom. The batter's name, lineup number, and jersey number are not visible in this crop. The diamond/scored icons and full ball/strike grids are not visible, making it impossible to reliably determine balls vs strikes separately or confirm result codes. All values are best-effort estimates and marked uncertain due to severe image cropping and illegibility. | Row 3: Image clarity made exact X counts and jersey/batter name difficult to confirm with certainty; some boxes (1, 3, 4, 6, 8, 9) have uncertain X counts due to overlapping marks. Jersey number and batter name were not clearly legible in the strip. | Row 4: The cropped strip does not show the batter's name, jersey number, or lineup number clearly; these were not visible in the image and are reported as null/defaulted. The grid of X marks (balls/strikes) within each box was too faint, overlapping, or cropped to reliably count, so these values are reported as null with uncertain=true. Only the printed result codes at the top of each box (F7, K, 1B, 4-3, K, K, P6, HBP, 1B) were legible. The diamond/scored indicator was not clearly visible for any box, so 'scored' is null throughout. | Row 5: This strip appears to be cropped extremely tightly, cutting off the batter's name, jersey number, and most result-code text below the X-mark grids. The diamond scoring icons and result codes (letters/numbers) at the bottom of each box are mostly obscured or cut off by the image boundary, making exact result codes unreadable except a possible '1' or similar mark in column 5. Column 8 shows a solid black/filled mark that may indicate a scored diamond, but it's ambiguous whether it's a scoring diamond or ink smudge. X counts were estimated from a crowded, low-resolution image and should be treated as approximate best guesses given the poor visibility of the row. | Row 6: The cropped strip did not clearly show the batter's name or jersey number, so these fields are uncertain. The sequence of results (1B, BB, K, BB, K, BB, K, K, F9) and their X-mark counts were difficult to align precisely due to overlapping marks and tilted cropping; counts are best estimates and may not perfectly satisfy BB/K rules in every box. | Row 7: The strip is extremely narrow and tilted, making the batter's name, jersey number, and most result codes illegible. Diamond (scoring) markers could not be clearly distinguished from box borders. X counts in several boxes are approximate due to overlapping marks and poor image resolution. | Row 8: This strip crop does not show the batter's lineup number, jersey number, or name clearly - these fields are left null/default. Most boxes are blank. The last box (column 9) shows two X marks (likely strikes) and a result code that reads '1-3', which is an unusual fielding code (possibly pitcher to third baseman, or could be misread). The diamond/scoring icon was not clearly visible in this crop, so 'scored' is assumed false but uncertain. Box count assumes 9 total boxes visible in the strip, but the exact number of blank boxes before the written one could not be verified with full certainty due to the narrow crop. | Row 9: Image strip is extremely thin and cropped, showing only faint diamond icons and grid lines with no clear X marks. A partial result code '-3' is visible in the last box, possibly part of a fielding play code like '6-3', but the first character is cut off. Name, jersey number, and most at-bat details could not be determined from this fragment."
 }
