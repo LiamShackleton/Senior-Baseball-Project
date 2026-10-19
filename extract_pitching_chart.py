@@ -30,6 +30,7 @@ SPLIT = 0.40          # where the table ends and the boxes begin, as a fraction 
 TABLE_SIDE = "left"   # which side of the cut holds the velocity table
 ROTATE = 0            # degrees clockwise to turn the photo (0 if it's already upright)
 MIN_VELO, MAX_VELO = 40, 100  # velocities outside this range get flagged
+ZONE_UPSCALE = 1.5    # enlarge the zone boxes before sending, so thin lines are easier to see
 
 # ---------------------------------------------------------------------------
 # Prompts: describe YOUR chart. Update them if the chart layout changes.
@@ -74,36 +75,44 @@ You are reading the strike-zone boxes from a handwritten baseball pitching
 chart for one pitcher's outing. Accuracy matters more than speed.
 
 LAYOUT
-- The sheet has a grid of gray square panels, each holding a hand-drawn
-  rectangle. The drawn RECTANGLE is the strike zone. The gray margin around it
-  is just outside the zone. One panel is one at-bat (one batter).
+- The sheet has a grid of light-gray square panels. Each panel holds a
+  hand-drawn rectangle with a BLACK outline. One panel is one at-bat.
+- THE STRIKE ZONE IS ONLY THE AREA INSIDE THE BLACK OUTLINE. The gray square
+  behind it is just background, not part of the zone. The black rectangle
+  nearly fills its gray square, so the gray margin is very thin. A number
+  written in that thin margin, touching or crossing a black line, or beyond
+  the gray square, is OUTSIDE the zone.
 - Most panels are empty. Only report panels that have pitch numbers in them.
-- Each pitch is a small NUMBER written where that pitch crossed the plate,
-  either inside the rectangle or outside it. A numbered pitch may also have a
-  small dot beside it; the pitch location is where the number and dot are.
-- Numbers count up continuously through the whole outing and do not restart
-  for each batter, so the numbers in one panel are consecutive and continue
-  from the previous panel in game order.
-- Text written above a panel (such as K, BB, F7, 1B, 6-3) is the result of
-  that at-bat. Use null if there is none.
+- Each pitch is a small NUMBER written where that pitch crossed the plate. It
+  may have a small dot beside it; the location is where the number and dot are.
+- Numbers count up continuously through the whole outing and do not restart for
+  each batter, so the numbers in one panel are consecutive and continue from
+  the previous panel in game order.
+- Text written above a panel (such as K, BB, F7, 1B, 6-3) is the result of that
+  at-bat. Use null if there is none.
 - Ignore the title, the summary boxes (H, BB, HBP, K, velocity range) and the
   innings table; they are not strike zones.
 
-COORDINATES
-For each pitch number, estimate where its center sits relative to the drawn
-rectangle, exactly as it appears on the page:
-- x: 0.0 = left edge of the rectangle, 1.0 = right edge. Outside the rectangle
-  is below 0 or above 1 (for example -0.2 or 1.3).
-- y: 0.0 = bottom edge of the rectangle, 1.0 = top edge. Below the rectangle is
-  negative, above is greater than 1.
-Round to one decimal place. Visual estimates are fine.
+LOCATION
+For each pitch number, first decide "where" by comparing it to the BLACK
+OUTLINE only. Use exactly one of:
+  "inside"  (fully within the black lines)
+  "above", "below", "left", "right"  (outside, beyond that one side)
+  "above-left", "above-right", "below-left", "below-right"  (outside a corner)
+Then estimate x and y relative to the black rectangle:
+- x: 0.0 = left black line, 1.0 = right black line. Outside is below 0 or above 1.
+- y: 0.0 = bottom black line, 1.0 = top black line. Below is negative, above is
+  greater than 1.
+Round to one decimal place. x and y must agree with "where": an "inside" pitch
+has both between 0 and 1, and "left" means x is below 0, and so on.
 
 PROCEDURE
 1. List the panels that contain pitch numbers, and note each one's row on the
    sheet (1 = top) and position in that row (1 = leftmost).
 2. In each panel, read every number carefully. Numbers can have two digits and
    can touch the rectangle or each other.
-3. If a number or position is hard to read, set "uncertain": true instead of
+3. For each number, trace the black outline first, then decide "where".
+4. If a number or position is hard to read, set "uncertain": true instead of
    guessing. Never invent a number.
 
 Return ONLY valid JSON (no markdown, no extra text) in this structure:
@@ -115,7 +124,7 @@ Return ONLY valid JSON (no markdown, no extra text) in this structure:
       "sheet_col": <number>,
       "result": "<text written above the panel, or null>",
       "pitches": [
-        {"number": <integer>, "x": <number>, "y": <number>, "uncertain": <true or false>}
+        {"number": <integer>, "where": "<one of the values above>", "x": <number>, "y": <number>, "uncertain": <true or false>}
       ]
     }
   ],
@@ -146,6 +155,35 @@ def save_crops(table_img, zones_img, folder="crops_debug"):
 # ---------------------------------------------------------------------------
 # Joining the two reads, and checking them (plain rules, no AI)
 # ---------------------------------------------------------------------------
+
+def reconcile(mark):
+    """The model's "where" (inside / above / below-left ...) is an easier call
+    than exact coordinates, so when the two disagree, "where" wins and x and y
+    are nudged to match it. Returns (x, y, adjusted)."""
+    where = str(mark.get("where") or "").lower()
+    x, y = mark.get("x"), mark.get("y")
+    if not where or x is None or y is None:
+        return x, y, False
+    old = (x, y)
+    if where == "inside":
+        x, y = min(max(x, 0.05), 0.95), min(max(y, 0.05), 0.95)
+    else:
+        if "left" in where and x >= 0:
+            x = -0.15
+        if "right" in where and x <= 1:
+            x = 1.15
+        if "above" in where and y <= 1:
+            y = 1.15
+        if "below" in where and y >= 0:
+            y = -0.15
+        # A side-only answer such as "left" says nothing about the other axis.
+        # Keep the model's other coordinate, but inside the zone's span.
+        if "left" not in where and "right" not in where:
+            x = min(max(x, 0.0), 1.0)
+        if "above" not in where and "below" not in where:
+            y = min(max(y, 0.0), 1.0)
+    return x, y, (x, y) != old
+
 
 def merge_pitching(table, zones):
     """Join the velocity table and the zone boxes by pitch number.
@@ -190,12 +228,17 @@ def merge_pitching(table, zones):
                 warnings.append(f"pitch {number} ({where}) has no entry in the velocity table")
             if mark.get("uncertain"):
                 warnings.append(f"pitch {number}: location marked uncertain")
+            x, y, adjusted = reconcile(mark)
+            if adjusted:
+                warnings.append(f"pitch {number}: coordinates adjusted to match "
+                                f"'{mark.get('where')}'")
             pitches.append({
                 "number": number,
                 "pitch_type": row.get("pitch_type") if row else None,
                 "velocity": row.get("velocity") if row else None,
-                "x": mark.get("x"),
-                "y": mark.get("y"),
+                "where": mark.get("where"),
+                "x": x,
+                "y": y,
                 "uncertain": bool(mark.get("uncertain") or (row and row.get("uncertain"))),
             })
         if pitches:
@@ -272,6 +315,8 @@ def main():
     if args.dry_run:
         save_crops(table_img, zones_img)
         return
+    zones_img = zones_img.resize((round(zones_img.width * ZONE_UPSCALE),
+                                  round(zones_img.height * ZONE_UPSCALE)))
 
     client = make_client()
     print("Sending the table and the zone boxes to Claude (two requests)...")

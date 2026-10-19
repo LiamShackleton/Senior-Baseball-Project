@@ -1,6 +1,15 @@
 {
   "source_image": "sample_charts/TestChart_04.png",
-  "warnings": [],
+  "warnings": [
+    "pitch 1: location marked uncertain",
+    "pitch 3: coordinates adjusted to match 'below-left'",
+    "pitch 4: location marked uncertain",
+    "pitch 11: location marked uncertain",
+    "pitch 10: location marked uncertain",
+    "pitch 10: coordinates adjusted to match 'above-right'",
+    "pitch 7: coordinates adjusted to match 'below-left'",
+    "pitch 12: location marked uncertain"
+  ],
   "pitcher": null,
   "game_info": null,
   "total_pitches_in_table": 14,
@@ -14,24 +23,27 @@
           "number": 1,
           "pitch_type": "FB",
           "velocity": 86,
-          "x": 0.0,
-          "y": 1.0,
-          "uncertain": false
+          "where": "inside",
+          "x": 0.05,
+          "y": 0.95,
+          "uncertain": true
         },
         {
           "number": 2,
           "pitch_type": "FB",
           "velocity": 87,
-          "x": 0.6,
-          "y": 0.1,
+          "where": "inside",
+          "x": 0.7,
+          "y": 0.2,
           "uncertain": false
         },
         {
           "number": 3,
           "pitch_type": "CH",
           "velocity": 76,
-          "x": 0.0,
-          "y": 0.0,
+          "where": "below-left",
+          "x": -0.15,
+          "y": -0.1,
           "uncertain": false
         }
       ],
@@ -46,15 +58,17 @@
           "number": 4,
           "pitch_type": "SL",
           "velocity": 74,
-          "x": 0.5,
+          "where": "below-right",
+          "x": 1.1,
           "y": -0.2,
-          "uncertain": false
+          "uncertain": true
         },
         {
           "number": 5,
           "pitch_type": "SL",
           "velocity": 75,
-          "x": 0.0,
+          "where": "inside",
+          "x": 0.2,
           "y": 0.3,
           "uncertain": false
         },
@@ -62,8 +76,9 @@
           "number": 6,
           "pitch_type": "FB",
           "velocity": 86,
+          "where": "inside",
           "x": 0.4,
-          "y": 0.9,
+          "y": 0.8,
           "uncertain": false
         }
       ],
@@ -78,41 +93,46 @@
           "number": 7,
           "pitch_type": "CH",
           "velocity": 75,
-          "x": 0.0,
-          "y": 0.0,
+          "where": "below-left",
+          "x": -0.15,
+          "y": -0.1,
           "uncertain": false
         },
         {
           "number": 8,
           "pitch_type": "SL",
           "velocity": 74,
-          "x": 0.4,
-          "y": 0.0,
+          "where": "below",
+          "x": 0.6,
+          "y": -0.1,
           "uncertain": false
         },
         {
           "number": 9,
           "pitch_type": "FB",
           "velocity": 87,
-          "x": 0.1,
-          "y": 0.5,
+          "where": "inside",
+          "x": 0.15,
+          "y": 0.6,
           "uncertain": false
         },
         {
           "number": 10,
           "pitch_type": "FB",
           "velocity": 87,
-          "x": 0.7,
-          "y": 1.0,
-          "uncertain": false
+          "where": "above-right",
+          "x": 1.15,
+          "y": 1.1,
+          "uncertain": true
         },
         {
           "number": 11,
           "pitch_type": "FB",
           "velocity": 86,
-          "x": 0.0,
-          "y": 1.0,
-          "uncertain": false
+          "where": "above",
+          "x": 0.3,
+          "y": 1.05,
+          "uncertain": true
         }
       ],
       "order": 3
@@ -126,29 +146,32 @@
           "number": 12,
           "pitch_type": "FB",
           "velocity": 85,
-          "x": 0.1,
+          "where": "left",
+          "x": -0.05,
           "y": 0.1,
-          "uncertain": false
+          "uncertain": true
         },
         {
           "number": 13,
           "pitch_type": "CH",
           "velocity": 76,
+          "where": "below",
           "x": 0.4,
-          "y": 0.0,
+          "y": -0.1,
           "uncertain": false
         },
         {
           "number": 14,
           "pitch_type": "FB",
           "velocity": 88,
-          "x": 0.4,
-          "y": 0.9,
+          "where": "inside",
+          "x": 0.5,
+          "y": 0.8,
           "uncertain": false
         }
       ],
       "order": 4
     }
   ],
-  "notes": "Rows 15 and beyond are blank. All handwritten entries were legible. | All other panels on the sheet are empty (no pitch numbers). Row 2 col 3 and all subsequent rows contain only blank drawn rectangles with no numbers."
+  "notes": "No pitcher name or game info visible on the chart. All entries were clearly legible. | Several numbers (1, 11, 10, 12) are written very close to or touching the black outline, making exact inside/outside determination uncertain. The '4' pitch has a small dot mark near it, consistent with instructions. All other panels in the sheet appear empty of pitch numbers."
 }
