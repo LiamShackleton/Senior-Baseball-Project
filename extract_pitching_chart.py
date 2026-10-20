@@ -79,9 +79,10 @@ LAYOUT
   hand-drawn rectangle with a BLACK outline. One panel is one at-bat.
 - THE STRIKE ZONE IS ONLY THE AREA INSIDE THE BLACK OUTLINE. The gray square
   behind it is just background, not part of the zone. The black rectangle
-  nearly fills its gray square, so the gray margin is very thin. A number
-  written in that thin margin, touching or crossing a black line, or beyond
-  the gray square, is OUTSIDE the zone.
+  nearly fills its gray square, so the gray margin is very thin. A number is
+  OUTSIDE the zone only if MORE THAN HALF of it lies beyond a black line, that
+  is, its center is outside the line. A number that merely touches or overlaps
+  a black line, with at least half of it still inside, is INSIDE the zone.
 - Most panels are empty. Only report panels that have pitch numbers in them.
 - Each pitch is a small NUMBER written where that pitch crossed the plate. It
   may have a small dot beside it; the location is where the number and dot are.
@@ -94,9 +95,10 @@ LAYOUT
   innings table; they are not strike zones.
 
 LOCATION
-For each pitch number, first decide "where" by comparing it to the BLACK
-OUTLINE only. Use exactly one of:
-  "inside"  (fully within the black lines)
+For each pitch number, first decide "where" by comparing the CENTER of
+the number to the BLACK OUTLINE. If the center is inside the lines, the answer
+is "inside", even if part of the number touches a line. Use exactly one of:
+  "inside"  (the center is within the black lines, even if the number touches a line)
   "above", "below", "left", "right"  (outside, beyond that one side)
   "above-left", "above-right", "below-left", "below-right"  (outside a corner)
 Then estimate x and y relative to the black rectangle:
@@ -111,7 +113,8 @@ PROCEDURE
    sheet (1 = top) and position in that row (1 = leftmost).
 2. In each panel, read every number carefully. Numbers can have two digits and
    can touch the rectangle or each other.
-3. For each number, trace the black outline first, then decide "where".
+3. For each number, trace the black outline first, then decide "where" from
+   which side of the line the center of the number is on.
 4. If a number or position is hard to read, set "uncertain": true instead of
    guessing. Never invent a number.
 
@@ -300,6 +303,22 @@ def print_summary(result, warnings, max_warnings=12):
 
 # ---------------------------------------------------------------------------
 
+def read_pitching_chart(path, client=None):
+    """Photo in, (result, warnings) out: read the table and the zone boxes,
+    then join them by pitch number."""
+    table_img, zones_img = split_halves(load_image(path, ROTATE))
+    zones_img = zones_img.resize((round(zones_img.width * ZONE_UPSCALE),
+                                  round(zones_img.height * ZONE_UPSCALE)))
+    client = client or make_client()
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        table_job = pool.submit(ask_claude, client, table_img, TABLE_PROMPT,
+                                "Extract the velocity table as JSON.")
+        zones_job = pool.submit(ask_claude, client, zones_img, ZONE_PROMPT,
+                                "Extract the strike-zone boxes as JSON.")
+        table, zones = table_job.result(), zones_job.result()
+    return merge_pitching(table, zones)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Read a handwritten pitching chart photo.")
     parser.add_argument("image", help="path to the chart photo")
@@ -311,26 +330,16 @@ def main():
     if not path.exists():
         sys.exit(f"File not found: {path}")
 
-    table_img, zones_img = split_halves(load_image(path, ROTATE))
     if args.dry_run:
-        save_crops(table_img, zones_img)
+        save_crops(*split_halves(load_image(path, ROTATE)))
         return
-    zones_img = zones_img.resize((round(zones_img.width * ZONE_UPSCALE),
-                                  round(zones_img.height * ZONE_UPSCALE)))
 
-    client = make_client()
     print("Sending the table and the zone boxes to Claude (two requests)...")
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        table_job = pool.submit(ask_claude, client, table_img, TABLE_PROMPT,
-                                "Extract the velocity table as JSON.")
-        zones_job = pool.submit(ask_claude, client, zones_img, ZONE_PROMPT,
-                                "Extract the strike-zone boxes as JSON.")
-        try:
-            table, zones = table_job.result(), zones_job.result()
-        except Exception as error:
-            sys.exit(f"Extraction failed: {error}")
+    try:
+        result, warnings = read_pitching_chart(path)
+    except Exception as error:
+        sys.exit(f"Extraction failed: {error}")
 
-    result, warnings = merge_pitching(table, zones)
     out = Path("extracted") / f"{path.stem}_pitching.json"
     out.parent.mkdir(exist_ok=True)
     out.write_text(json.dumps({"source_image": str(path), "warnings": warnings, **result}, indent=2))

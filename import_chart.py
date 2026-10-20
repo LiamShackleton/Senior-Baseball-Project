@@ -302,10 +302,9 @@ def save(result, original, game_plan, batter_plans, image, team):
 
         connection.commit()
         return game_id, chart_id, at_bats
-    except Exception as error:
-        connection.rollback()
-        print(f"\nSomething went wrong, so everything was undone. Nothing was saved.\n  {error}")
-        sys.exit(1)
+    except Exception:
+        connection.rollback()  # undo everything, then let the caller report it
+        raise
     finally:
         connection.close()
 
@@ -416,8 +415,12 @@ def main():
         print("Nothing was saved.")
         return
 
-    game_id, chart_id, count = save(result, original, game_plan, batter_plans,
-                                    image, args.team or None)
+    try:
+        game_id, chart_id, count = save(result, original, game_plan, batter_plans,
+                                        image, args.team or None)
+    except Exception as error:
+        sys.exit(f"\nSomething went wrong, so everything was undone. "
+                 f"Nothing was saved.\n  {error}")
     print(f"\nSaved {count} at-bats (game {game_id}, chart {chart_id}). "
           f"Open the app to see them.")
 

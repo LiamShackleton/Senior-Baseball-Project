@@ -39,6 +39,19 @@ PLACES = {
 }
 
 
+def where_of(p):
+    """Where a pitch landed, as one of the PLACES words. Uses the model's own
+    answer when it gave one, otherwise works it out from x and y."""
+    if p.get("where") in PLACES:
+        return p["where"]
+    x, y = p.get("x"), p.get("y")
+    if x is None or y is None:
+        return "inside"
+    side = "left" if x < 0 else "right" if x > 1 else ""
+    height = "above" if y > 1 else "below" if y < 0 else ""
+    return "-".join(part for part in (height, side) if part) or "inside"
+
+
 def in_zone(p):
     x, y = p.get("x"), p.get("y")
     return x is not None and y is not None and 0 <= x <= 1 and 0 <= y <= 1
@@ -172,10 +185,9 @@ def save(result, original, game_plan, pitcher_decision, image, team):
 
         connection.commit()
         return game_id, chart_id, at_bats, pitches
-    except Exception as error:
-        connection.rollback()
-        print(f"\nSomething went wrong, so everything was undone. Nothing was saved.\n  {error}")
-        sys.exit(1)
+    except Exception:
+        connection.rollback()  # undo everything, then let the caller report it
+        raise
     finally:
         connection.close()
 
@@ -243,8 +255,12 @@ def main():
     if not yes_no("Save all of this to the database?"):
         sys.exit("Nothing was saved.")
 
-    game_id, chart_id, at_bats, pitches = save(result, original, game_plan, pitcher_decision,
-                                               image, args.team or None)
+    try:
+        game_id, chart_id, at_bats, pitches = save(result, original, game_plan,
+                                                   pitcher_decision, image, args.team or None)
+    except Exception as error:
+        sys.exit(f"\nSomething went wrong, so everything was undone. "
+                 f"Nothing was saved.\n  {error}")
     print(f"\nSaved {at_bats} at-bats and {pitches} pitches (game {game_id}, chart {chart_id}). "
           f"Open the app to see them.")
 

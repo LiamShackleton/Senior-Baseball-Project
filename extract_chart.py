@@ -17,7 +17,7 @@ import io
 import json
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -120,14 +120,19 @@ def split_into_rows(img):
     ]
 
 
-def save_debug_images(img, strips, folder="strips_debug"):
-    """Save the photo with the cut lines drawn on it, plus each strip."""
-    Path(folder).mkdir(exist_ok=True)
+def overlay_image(img):
+    """The photo with the row cut lines drawn on it in red."""
     preview = img.copy()
     draw = ImageDraw.Draw(preview)
     for y in row_edges(preview.height):
         draw.line([(0, y), (preview.width, y)], fill=(255, 0, 0), width=max(3, preview.height // 400))
-    preview.save(Path(folder) / "overlay.jpg", quality=90)
+    return preview
+
+
+def save_debug_images(img, strips, folder="strips_debug"):
+    """Save the photo with the cut lines drawn on it, plus each strip."""
+    Path(folder).mkdir(exist_ok=True)
+    overlay_image(img).save(Path(folder) / "overlay.jpg", quality=90)
     for i, strip in enumerate(strips, start=1):
         strip.save(Path(folder) / f"row_{i}.jpg", quality=90)
     print(f"Saved overlay.jpg and {len(strips)} strips to '{folder}'. "
@@ -156,7 +161,7 @@ def make_client():
 
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
-        sys.exit("No ANTHROPIC_API_KEY found. Check your .env file.")
+        raise RuntimeError("No ANTHROPIC_API_KEY found. Check your .env file.")
     return anthropic.Anthropic(api_key=api_key)
 
 
@@ -187,8 +192,9 @@ def ask_claude(client, img, system_prompt, user_text):
         raise ValueError("Response wasn't valid JSON. Start of it: " + raw[:300])
 
 
-def extract_rows(client, strips):
-    """Read each batter's strip (a few at a time) and combine the results."""
+def extract_rows(client, strips, progress=None):
+    """Read each batter's strip (a few at a time) and combine the results.
+    progress, if given, is called as progress(rows_done, rows_total)."""
     print(f"Sending {len(strips)} rows to Claude, 3 at a time...")
     prompt = ROW_PROMPT.replace("__COLS__", str(COLUMNS))
 
@@ -201,8 +207,21 @@ def extract_rows(client, strips):
         print(f"  Row {index}/{len(strips)} done", flush=True)
         return row
 
+    rows = {}
     with ThreadPoolExecutor(max_workers=3) as pool:
-        return merge_rows(list(pool.map(read_row, enumerate(strips, start=1))))
+        futures = {pool.submit(read_row, item): item[0]
+                   for item in enumerate(strips, start=1)}
+        for done, future in enumerate(as_completed(futures), start=1):
+            rows[futures[future]] = future.result()
+            if progress:
+                progress(done, len(strips))
+    return merge_rows([rows[i] for i in sorted(rows)])
+
+
+def read_hitting_chart(path, client=None, progress=None):
+    """Photo in, result out: cut the chart into rows and read each one."""
+    strips = split_into_rows(load_image(path, ROTATE))
+    return extract_rows(client or make_client(), strips, progress)
 
 
 def fix_count(ab):
@@ -336,14 +355,15 @@ def main():
     if not path.exists():
         sys.exit(f"File not found: {path}")
 
-    img = load_image(path, ROTATE)
-    strips = split_into_rows(img)
-
     if args.dry_run:
-        save_debug_images(img, strips)
+        img = load_image(path, ROTATE)
+        save_debug_images(img, split_into_rows(img))
         return
 
-    result = extract_rows(make_client(), strips)
+    try:
+        result = read_hitting_chart(path)
+    except RuntimeError as error:
+        sys.exit(str(error))
 
     out = Path("extracted") / f"{path.stem}.json"
     out.parent.mkdir(exist_ok=True)
