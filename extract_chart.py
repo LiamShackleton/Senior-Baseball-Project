@@ -44,7 +44,8 @@ USE_THINKING = True # True = more careful but slower; False = faster and cheaper
 ROW_PROMPT = """
 You are reading ONE horizontal strip cut from a photo of a handwritten
 baseball at-bat chart. It holds a single batter's row. Accuracy matters more
-than speed.
+than speed. Ignore what you see on the edges of the strip; only read the row whose
+ name is most fully visible.
 
 LAYOUT
 - The batter's name is at the LEFT edge. To its right are exactly __COLS__

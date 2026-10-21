@@ -1,0 +1,302 @@
+{
+  "source_image": "sample_charts/TestChart_05.png",
+  "layout": {
+    "batter_rows": 9,
+    "columns_with_writing": 3
+  },
+  "batters": [
+    {
+      "name": "Tate",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 1,
+          "result": "1B",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 3,
+          "result": "4-3",
+          "scored": false,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Steve",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 0,
+          "result": "BB",
+          "scored": true,
+          "uncertain": true
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 1,
+          "result": "2B",
+          "scored": true,
+          "uncertain": true
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": true
+        }
+      ]
+    },
+    {
+      "name": "CJ",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 1,
+          "result": "3U",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 2,
+          "result": "BB",
+          "scored": false,
+          "uncertain": true,
+          "original_count": "3-2"
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 1,
+          "result": "HR",
+          "scored": true,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Suge",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 3,
+          "strikes": 4,
+          "result": "K",
+          "scored": false,
+          "uncertain": true
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 2,
+          "result": "F8",
+          "scored": false,
+          "uncertain": true
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 2,
+          "result": "1B",
+          "scored": true,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Myles",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 0,
+          "result": "BB",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 2,
+          "result": "2B",
+          "scored": true,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "AJ",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 1,
+          "result": "BB",
+          "scored": true,
+          "uncertain": true,
+          "original_count": "3-1"
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": true,
+          "original_count": "2-2"
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 1,
+          "result": "4-3",
+          "scored": false,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Nolan",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 0,
+          "result": "1B",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 0,
+          "result": "BB",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 3,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": true
+        }
+      ]
+    },
+    {
+      "name": "Depew",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 1,
+          "result": "6-3",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 0,
+          "result": "BB",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 2,
+          "result": "2B",
+          "scored": true,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Depew",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": null,
+          "strikes": null,
+          "result": "6-3",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": null,
+          "result": "BB",
+          "scored": true,
+          "uncertain": false,
+          "original_count": "None-None"
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": null,
+          "strikes": null,
+          "result": "2B",
+          "scored": true,
+          "uncertain": false
+        }
+      ]
+    }
+  ],
+  "notes": "Row 1: Extra X marks visible below box 3 (near bottom edge) likely belong to the next row and were excluded from this reading. | Row 2: The X-mark grids for Steve's at-bats were crowded and partially overlapping the printed 'B NO S' header text, making exact ball/strike counts difficult to verify precisely for boxes 1-3. Diamond shading for scored runs in boxes 1 and 2 appeared solid/black, indicating scored=true; box 3 (K) showed no visible diamond marking. | Row 3: Box 2 (BB) shows only 3 visible X's in the balls row rather than the expected 4, so it's flagged uncertain. X counts in boxes 1-3 were somewhat crowded/overlapping, making exact tallies difficult to confirm with full certainty. A faint sliver of the row below CJ's row (with additional X's) was excluded per instructions. | Row 4: X counts in boxes 1 and 2 were crowded and partially overlapping, making exact ball/strike totals uncertain. Box 3 shows a filled (shaded) diamond indicating the batter scored after a 1B hit. | Row 5: Box1 shows 4 balls, no strikes visible, consistent with BB. Box3 shows 2 strikes and no balls recorded, result 2B with scored diamond shaded (filled black). | Row 6: Box1 shows a filled (scored) diamond and 'BB' result, but only 3 balls and 1 strike X are visible rather than the expected 4 balls for a walk. Box2 shows 'K' but only 2 strikes and 2 balls are visible, fewer than the 3 strikes needed for a strikeout. Both discrepancies are reported as seen without adjustment, per instructions. | Row 7: Nolan's row was chosen as the fully visible row; the AJ row above is a sliver and was ignored per instructions. The X marks in boxes 1-3 were crowded and partially overlapping, making exact ball/strike counts for box 3 (K) uncertain, though they are consistent with a full-count strikeout (3 balls, 3 strikes). | Row 8: Top row belongs to 'Nolan' but is cut off at the top of the strip; only partial boxes are visible for that row and were excluded. Diamond shading for Depew's boxes was inferred from filled black shapes preceding the result text in boxes 2 and 3. | Row 9: Boxes 1-3 contain text results (6-3, BB, 2B) with shaded diamond indicators for scoring in boxes 2 and 3; no X marks visible for balls/strikes counts in any box. Box 5 diamond status unclear due to strip edge."
+}

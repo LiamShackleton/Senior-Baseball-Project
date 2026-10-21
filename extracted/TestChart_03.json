@@ -14,8 +14,8 @@
           "balls": 1,
           "strikes": 3,
           "result": "K",
-          "scored": null,
-          "uncertain": true
+          "scored": false,
+          "uncertain": false
         },
         {
           "column": 2,
@@ -30,10 +30,10 @@
           "column": 3,
           "box_blank": false,
           "balls": 0,
-          "strikes": 2,
+          "strikes": 1,
           "result": "1B",
           "scored": true,
-          "uncertain": false
+          "uncertain": true
         },
         {
           "column": 4,
@@ -71,11 +71,11 @@
           "column": 3,
           "box_blank": false,
           "balls": 4,
-          "strikes": 1,
+          "strikes": 2,
           "result": "BB",
           "scored": false,
           "uncertain": true,
-          "original_count": "3-1"
+          "original_count": "3-2"
         },
         {
           "column": 4,
@@ -94,8 +94,8 @@
         {
           "column": 1,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 3,
+          "balls": 3,
+          "strikes": 2,
           "result": "HBP",
           "scored": false,
           "uncertain": true
@@ -103,8 +103,8 @@
         {
           "column": 2,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 2,
+          "balls": 2,
+          "strikes": 1,
           "result": "P6",
           "scored": false,
           "uncertain": false
@@ -112,7 +112,7 @@
         {
           "column": 3,
           "box_blank": false,
-          "balls": 0,
+          "balls": 1,
           "strikes": 3,
           "result": "K",
           "scored": false,
@@ -144,7 +144,7 @@
         {
           "column": 2,
           "box_blank": false,
-          "balls": 0,
+          "balls": 2,
           "strikes": 3,
           "result": "K",
           "scored": false,
@@ -154,11 +154,11 @@
           "column": 3,
           "box_blank": false,
           "balls": 4,
-          "strikes": 4,
+          "strikes": 1,
           "result": "BB",
           "scored": false,
           "uncertain": true,
-          "original_count": "2-4"
+          "original_count": "3-1"
         },
         {
           "column": 4,
@@ -199,8 +199,7 @@
           "strikes": 1,
           "result": "BB",
           "scored": false,
-          "uncertain": true,
-          "original_count": "3-1"
+          "uncertain": false
         },
         {
           "column": 4,
@@ -219,25 +218,25 @@
         {
           "column": 1,
           "box_blank": false,
-          "balls": 2,
+          "balls": 1,
           "strikes": 2,
           "result": "3B",
-          "scored": false,
-          "uncertain": false
+          "scored": true,
+          "uncertain": true
         },
         {
           "column": 2,
           "box_blank": false,
-          "balls": 1,
-          "strikes": 3,
+          "balls": 3,
+          "strikes": 2,
           "result": "4-3",
           "scored": false,
-          "uncertain": false
+          "uncertain": true
         },
         {
           "column": 3,
           "box_blank": false,
-          "balls": 2,
+          "balls": 3,
           "strikes": 3,
           "result": "K",
           "scored": false,
@@ -272,13 +271,13 @@
           "balls": 1,
           "strikes": 2,
           "result": "1B",
-          "scored": true,
+          "scored": false,
           "uncertain": false
         },
         {
           "column": 3,
           "box_blank": false,
-          "balls": 1,
+          "balls": 3,
           "strikes": 3,
           "result": "K",
           "scored": false,
@@ -305,7 +304,7 @@
           "strikes": 1,
           "result": "1B",
           "scored": true,
-          "uncertain": true
+          "uncertain": false
         },
         {
           "column": 2,
@@ -344,11 +343,11 @@
         {
           "column": 1,
           "box_blank": false,
-          "balls": 5,
+          "balls": 3,
           "strikes": 2,
           "result": "1B",
           "scored": false,
-          "uncertain": true
+          "uncertain": false
         },
         {
           "column": 2,
@@ -357,7 +356,7 @@
           "strikes": 2,
           "result": "F7",
           "scored": false,
-          "uncertain": true
+          "uncertain": false
         },
         {
           "column": 3,
@@ -380,5 +379,5 @@
       ]
     }
   ],
-  "notes": "Row 1: Box 1's X pattern was crowded/overlapping, making it hard to determine exact strike/ball count; assumed 3 strikes to match the K result, but this is uncertain. No diamond mark was clearly visible in box 1 to determine scored status. | Row 2: Box 3 shows only 3 X's in the bottom (ball) row but is marked as BB, which normally requires 4 balls; counted exactly what was visible rather than adjusting to fit. The X groupings in boxes 1-3 were somewhat crowded, making exact strike/ball split slightly uncertain, though the total counts were legible. | Row 3: Box 1 shows HBP with a (2) notation next to the diamond, possibly indicating an RBI count or inning marker; the ball/strike counts don't match typical HBP logic, so marked uncertain. All diamonds appear unshaded, indicating the batter did not score in any recorded at-bat. | Row 4: Box 3 shows X marks totaling 4 in the strikes row and 2 in the balls row, which doesn't match the normal pattern for a walk (BB requires 4 balls, not 4 strikes). Reported counts as seen; marked uncertain due to mismatch. Top sliver of row above ('HBP', 'FO', 'R') and bottom sliver below were ignored per instructions. | Row 5: Row for Myles: Box1 (1B) shows a single X in the ball row and the scored diamond appears shaded. Box2 (K) shows three X's in the strike row, consistent with a strikeout. Box3 (BB) shows what appears to be 3 balls and 1 stray strike mark rather than the expected 4 balls for a walk; the X count doesn't perfectly match the BB result, so this box is flagged uncertain. Boxes 4 and 5 are empty. Faint marks from the adjacent row above (Sage) were ignored. | Row 6: Top and bottom slivers from neighboring rows (Ingles above, partial row below) were ignored. X counts in boxes 1-3 were read carefully from the two grid rows (strikes on top, balls on bottom); diamonds appear unshaded indicating the batter did not score in any recorded at-bat. | Row 7: Top row of each box = strikes, bottom row = balls, as read from the X grid. Box 2 (1B) has a shaded diamond indicating the batter scored. Boxes 4 and 5 are empty. | Row 8: The X-grid row above the 'Nolan' name line was interpreted as belonging to this batter's at-bats (strikes on top, balls on bottom). Box 1 showed only a single X, making it unclear whether it represented a strike or ball. Boxes 2 and 3 are marked 'K' but the counted strikes (2) do not meet the minimum of 3 required for a strikeout, so these are flagged uncertain. Diamond before box 1's '1B' appeared shaded (scored), while the diamonds for boxes 2 and 3 appeared unshaded (not scored). | Row 9: X counts in boxes 1 and 2 were crowded/overlapping, making exact counts uncertain. Box 1 shows more balls than a normal at-bat without a walk result, but since the result was 1B (not BB), the count was reported as seen. Diamonds in all filled boxes appear unshaded (not scored)."
+  "notes": "Row 1: Box 3's scored diamond appears filled in dark ink (possibly a correction mark rather than a standard shaded diamond), so scoring status is uncertain. Box counts reflect only clearly visible X's; some boxes may have additional overlapping marks not distinguishable. | Row 2: Box 1 X placement ambiguous (could be 1 strike/1 ball or overlapping marks). Box 3 marked BB but only 3 balls visible, which doesn't match the standard 4-ball requirement, so flagged uncertain. | Row 3: Box 1 shows a small '(2)' notation next to the diamond/HBP text whose meaning is unclear (possibly an RBI or count marker); diamond appears unshaded so scored=false. Faint X marks visible at the very bottom of the strip belong to the next row and were ignored. Top sliver reading 'Steve' belongs to the previous row and was ignored. | Row 4: Box 3 is labeled BB but only 3 balls (X's) are visible instead of the required 4; counts reported as seen. Diamond scoring marks were not clearly visible in any box, so 'scored' was inferred as false based on the recorded outs/BB with no visible shading. | Row 5: Row for 'Myles' was read from the strip between the partial 'Sage' row above and another partial row below. The X-grid above the result text in each box was interpreted as belonging to Myles' at-bats. Some X counts (especially in box 1) were small and could be partially obscured by crowding, so minor uncertainty exists in exact ball/strike counts though results and diamonds were legible. | Row 6: The X marks in the small grids are crowded and overlapping, making exact ball/strike counts for boxes 1 and 2 somewhat uncertain. The diamond before box 1's result appears shaded (scored), while the others appear unshaded (open parentheses). | Row 7: Diamonds in boxes 1-3 appear unshaded (not scored). Box 3's X counts are unusually high for a K but match the visible marks. | Row 8: Box1 diamond appears fully shaded, indicating the batter scored after a single. Boxes 2 and 3 are marked 'K' but the visible X counts (2 strikes each) do not meet the minimum of 3 strikes required for a strikeout, so these are flagged as uncertain. The exact split between strikes (top row) and balls (bottom row) in boxes 2 and 3 was difficult to determine due to crowded/overlapping X marks. | Row 9: X counts in boxes 1-3 were somewhat crowded/overlapping, making exact tallies slightly uncertain, though results and diamonds (unshaded) were clear."
 }
