@@ -1,0 +1,212 @@
+{
+  "type": "hitting",
+  "batters": [
+    {
+      "name": "Tate",
+      "at_bats": [
+        {
+          "result": "K",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "1B",
+          "balls": 1,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "4-3",
+          "balls": 3,
+          "strikes": 2,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Steve",
+      "at_bats": [
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "2B",
+          "balls": 2,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 1,
+          "strikes": 3,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "CJ",
+      "at_bats": [
+        {
+          "result": "3U",
+          "balls": 0,
+          "strikes": 1,
+          "scored": false
+        },
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "HR",
+          "balls": 2,
+          "strikes": 1,
+          "scored": true
+        }
+      ]
+    },
+    {
+      "name": "Sage",
+      "at_bats": [
+        {
+          "result": "K",
+          "balls": 3,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "F8",
+          "balls": 1,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "1B",
+          "balls": 1,
+          "strikes": 2,
+          "scored": true
+        }
+      ]
+    },
+    {
+      "name": "Myles",
+      "at_bats": [
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 0,
+          "scored": false
+        },
+        {
+          "result": "K",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "2B",
+          "balls": 1,
+          "strikes": 1,
+          "scored": true
+        }
+      ]
+    },
+    {
+      "name": "Will",
+      "at_bats": [
+        {
+          "result": "F9",
+          "balls": 0,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "K",
+          "balls": 3,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "3B",
+          "balls": 1,
+          "strikes": 1,
+          "scored": true
+        }
+      ]
+    },
+    {
+      "name": "AJ",
+      "at_bats": [
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "4-3",
+          "balls": 1,
+          "strikes": 1,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Nolan",
+      "at_bats": [
+        {
+          "result": "1B",
+          "balls": 2,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 3,
+          "strikes": 3,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Depew",
+      "at_bats": [
+        {
+          "result": "6-3",
+          "balls": 1,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "2B",
+          "balls": 2,
+          "strikes": 2,
+          "scored": true
+        }
+      ]
+    }
+  ]
+}

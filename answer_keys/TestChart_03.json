@@ -1,0 +1,218 @@
+{
+  "type": "hitting",
+  "batters": [
+    {
+      "name": "Tate",
+      "at_bats": [
+        {
+          "result": "K",
+          "balls": 1,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "1B",
+          "balls": 1,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "1B",
+          "balls": 1,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "1-3",
+          "balls": 2,
+          "strikes": 1,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Steve",
+      "at_bats": [
+        {
+          "result": "HBP",
+          "balls": 1,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "HBP",
+          "balls": 2,
+          "strikes": 1,
+          "scored": false
+        },
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 2,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "CJ",
+      "at_bats": [
+        {
+          "result": "HBP",
+          "balls": 3,
+          "strikes": 0,
+          "scored": false
+        },
+        {
+          "result": "P6",
+          "balls": 1,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "K",
+          "balls": 0,
+          "strikes": 3,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Sage",
+      "at_bats": [
+        {
+          "result": "FC 6-3",
+          "balls": 1,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 0,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 1,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Myles",
+      "at_bats": [
+        {
+          "result": "1B",
+          "balls": 1,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 0,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 2,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Will",
+      "at_bats": [
+        {
+          "result": "3B",
+          "balls": 2,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "4-3",
+          "balls": 1,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "K",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "AJ",
+      "at_bats": [
+        {
+          "result": "2B",
+          "balls": 0,
+          "strikes": 1,
+          "scored": false
+        },
+        {
+          "result": "1B",
+          "balls": 0,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "K",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Nolan",
+      "at_bats": [
+        {
+          "result": "1B",
+          "balls": 0,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 1,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "K",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Depew",
+      "at_bats": [
+        {
+          "result": "1B",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "F7",
+          "balls": 1,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "F9",
+          "balls": 2,
+          "strikes": 2,
+          "scored": false
+        }
+      ]
+    }
+  ]
+}

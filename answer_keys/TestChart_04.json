@@ -1,0 +1,109 @@
+{
+  "type": "pitching",
+  "boxes": [
+    {
+      "result": "K",
+      "pitches": [
+        {
+          "number": 1,
+          "pitch_type": "FB",
+          "velocity": 86,
+          "inside": true
+        },
+        {
+          "number": 2,
+          "pitch_type": "FB",
+          "velocity": 87,
+          "inside": true
+        },
+        {
+          "number": 3,
+          "pitch_type": "CH",
+          "velocity": 76,
+          "inside": false
+        }
+      ]
+    },
+    {
+      "result": "F7",
+      "pitches": [
+        {
+          "number": 4,
+          "pitch_type": "SL",
+          "velocity": 74,
+          "inside": false
+        },
+        {
+          "number": 5,
+          "pitch_type": "SL",
+          "velocity": 75,
+          "inside": true
+        },
+        {
+          "number": 6,
+          "pitch_type": "FB",
+          "velocity": 86,
+          "inside": true
+        }
+      ]
+    },
+    {
+      "result": "BB",
+      "pitches": [
+        {
+          "number": 7,
+          "pitch_type": "CH",
+          "velocity": 75,
+          "inside": false
+        },
+        {
+          "number": 8,
+          "pitch_type": "SL",
+          "velocity": 74,
+          "inside": false
+        },
+        {
+          "number": 9,
+          "pitch_type": "FB",
+          "velocity": 87,
+          "inside": true
+        },
+        {
+          "number": 10,
+          "pitch_type": "FB",
+          "velocity": 87,
+          "inside": false
+        },
+        {
+          "number": 11,
+          "pitch_type": "FB",
+          "velocity": 86,
+          "inside": false
+        }
+      ]
+    },
+    {
+      "result": "K",
+      "pitches": [
+        {
+          "number": 12,
+          "pitch_type": "FB",
+          "velocity": 85,
+          "inside": true
+        },
+        {
+          "number": 13,
+          "pitch_type": "CH",
+          "velocity": 76,
+          "inside": false
+        },
+        {
+          "number": 14,
+          "pitch_type": "FB",
+          "velocity": 88,
+          "inside": true
+        }
+      ]
+    }
+  ]
+}
