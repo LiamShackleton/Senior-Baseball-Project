@@ -21,11 +21,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from dotenv import load_dotenv
+import numpy as np
 from PIL import Image, ImageDraw, ImageOps
 
 load_dotenv()
 
-MODEL = "claude-sonnet-5"
+MODEL = "claude-sonnet-5-5"
 
 # ---------------------------------------------------------------------------
 # SETTINGS: how your chart photos are laid out.
@@ -33,6 +34,7 @@ MODEL = "claude-sonnet-5"
 ROWS = 9            # batters on the sheet
 COLUMNS = 5         # big at-bat boxes printed per batter row
 ROTATE = 0          # degrees clockwise to turn the photo (0 if it's already upright)
+AUTO_ROWS = True    # find the row lines in each photo (and straighten tilt). False = use the two numbers below
 GRID_TOP = 0.145    # where the first batter row starts, as a fraction of the height
 GRID_BOTTOM = 0.98  # where the last batter row ends
 OVERLAP = 0.25      # extra image kept above and below each row
@@ -134,21 +136,135 @@ Return ONLY valid JSON (no markdown, no extra text):
 # ---------------------------------------------------------------------------
 
 def load_image(path, rotate=0):
-    """Open a photo, fix phone-camera rotation, and turn it clockwise if asked."""
+    """Open a photo, fix phone-camera rotation, turn it clockwise if asked, and
+    (when AUTO_ROWS is on) straighten a slightly tilted photo."""
     img = ImageOps.exif_transpose(Image.open(path)).convert("RGB")
-    return img.rotate(-rotate, expand=True) if rotate else img
+    img = img.rotate(-rotate, expand=True) if rotate else img
+    return straighten(img) if AUTO_ROWS else img
 
 
-def row_edges(height):
-    """Pixel positions of the lines that separate the batter rows."""
-    start = height * GRID_TOP
-    band = (height * GRID_BOTTOM - start) / ROWS
-    return [start + i * band for i in range(ROWS + 1)]
+def _line_profile(gray):
+    """For each pixel row, the fraction of the middle of the photo that is thick dark ink.
+    Heavy printed row lines stand out; thin grid lines and handwriting mostly don't."""
+    dark = gray < 0.55 * np.percentile(gray, 90)  # well below the paper's brightness
+    thick = dark[:-1] & dark[1:]  # ink at least 2 pixels tall
+    # Drop dark areas much taller than a printed line (a dark table around the
+    # sheet, a big smudge): a line is dark for only a few pixel rows in a row.
+    tall = 12
+    cumulative = np.vstack([np.zeros((1, thick.shape[1]), int), np.cumsum(thick, axis=0)])
+    solid = (cumulative[tall:] - cumulative[:-tall]) == tall  # runs of `tall` dark pixels
+    near_solid = np.zeros_like(thick)
+    for shift in range(tall):  # grow each solid run back to its full height
+        near_solid[shift:shift + len(solid)] |= solid
+    thick = thick & ~near_solid
+    width = thick.shape[1]
+    # the middle of the photo, so a table or margin at the sides doesn't dilute the lines
+    return thick[:, int(width * 0.3):int(width * 0.7)].mean(axis=1)
+
+
+def _small_gray(img, width=800):
+    scale = width / img.width
+    return img.convert("L").resize((width, max(1, round(img.height * scale)))), scale
+
+
+def straighten(img):
+    """Rotate a slightly tilted photo so the row lines are horizontal.
+    Tries small angles and keeps the one that makes the lines sharpest."""
+    small, _ = _small_gray(img)
+    best_angle, best_score, base_score = 0.0, -1.0, None
+    for angle in np.arange(-4, 4.01, 0.25):
+        turned = small.rotate(float(angle), resample=Image.Resampling.BILINEAR, fillcolor=255)
+        score = float(np.var(_line_profile(np.asarray(turned, dtype=float))))
+        if abs(angle) < 1e-9:
+            base_score = score
+        if score > best_score:
+            best_angle, best_score = float(angle), score
+    # only turn the photo if it clearly helps
+    if abs(best_angle) < 0.3 or best_score < 1.1 * (base_score or 0):
+        best_angle = 0.0
+    turned = img.rotate(best_angle, resample=Image.Resampling.BICUBIC, fillcolor=(255, 255, 255)) if best_angle else img
+    turned.info["tilt"] = best_angle
+    return turned
+
+
+def find_row_lines(img):
+    """Find the ROWS + 1 evenly spaced heavy lines that separate the batter rows.
+    Returns (pixel positions, score from 0 to 1, lines clearly seen), or
+    (None, score, 0) if unsure."""
+    small, scale = _small_gray(img)
+    profile = _line_profile(np.asarray(small, dtype=float))
+    height = len(profile)
+    near = np.array([profile[max(0, y - 2):y + 3].max() for y in range(height)])  # forgive 2px of wobble
+    best = (None, 0.0, 0)
+    for top in range(int(height * 0.04), int(height * 0.32)):
+        for bottom in range(int(height * 0.78), int(height * 1.12)):
+            pitch = (bottom - top) / ROWS
+            if bottom > height + 0.75 * pitch:
+                continue  # the last row must be mostly in the photo, or the whole grid has slipped down a row
+            positions = np.round(top + pitch * np.arange(ROWS + 1)).astype(int)
+            inside = positions < height
+            # a line in the photo counts for how strong it is; the last line may
+            # be cut off by the photo's edge, which counts for a little
+            score = (near[positions[inside]].sum() + 0.1 * (~inside).sum()) / (ROWS + 1)
+            positions = np.clip(positions, 0, height - 1)
+            if score > best[1]:
+                best = (positions, score, int((near[positions] > 0.25).sum()))
+    if best[0] is None or best[1] < 0.35:
+        return None, best[1], 0
+    # A photo taken at a slight angle makes the rows a little uneven. Nudge each
+    # line to the strongest nearby heavy line, if there is one.
+    positions = best[0].astype(float)
+    pitch = (positions[-1] - positions[0]) / ROWS
+    strength = np.median([near[int(y)] for y in positions])
+    for i, y in enumerate(positions):
+        low, high = max(0, int(y - pitch * 0.2)), min(height, int(y + pitch * 0.2) + 1)
+        if high > low:
+            peak = low + int(np.argmax(profile[low:high]))
+            if profile[peak] >= 0.5 * strength:
+                positions[i] = peak
+    positions = np.maximum.accumulate(positions)  # keep the lines in order
+    return [float(y) / scale for y in positions], best[1], best[2]
+
+
+def row_edges(img):
+    """Pixel positions of the lines that separate the batter rows. Found from the
+    photo itself (and remembered on it), or from GRID_TOP / GRID_BOTTOM."""
+    if "row_edges" not in img.info:
+        edges = None
+        if AUTO_ROWS:
+            edges, score, seen = find_row_lines(img)
+            img.info["row_score"], img.info["row_seen"] = score, seen
+        if edges is None:
+            start = img.height * GRID_TOP
+            band = (img.height * GRID_BOTTOM - start) / ROWS
+            edges = [start + i * band for i in range(ROWS + 1)]
+            img.info["row_method"] = "fixed"
+        else:
+            img.info["row_method"] = "auto"
+        img.info["row_edges"] = edges
+    return img.info["row_edges"]
+
+
+def describe_rows(img):
+    row_edges(img)
+    if img.info["row_method"] == "auto":
+        tilt = img.info.get("tilt", 0)
+        text = (f"Row lines found automatically (confidence {img.info['row_score']:.2f})"
+                + (f", photo straightened by {tilt:+.2f} degrees." if tilt else "."))
+        seen = img.info.get("row_seen", ROWS + 1)
+        if seen < ROWS:
+            text += (f" WARNING: only {seen} of {ROWS + 1} row lines were clearly seen, "
+                     f"so check strips_debug/overlay.jpg.")
+        return text
+    if AUTO_ROWS:
+        return (f"Could not find the row lines (confidence {img.info.get('row_score', 0):.2f}), "
+                f"so fixed positions were used. Check strips_debug/overlay.jpg.")
+    return "Using the fixed row positions from GRID_TOP and GRID_BOTTOM."
 
 
 def split_into_rows(img):
     """Cut the grid into one strip per batter, with a little extra above and below."""
-    edges = row_edges(img.height)
+    edges = row_edges(img)
     pad = (edges[1] - edges[0]) * OVERLAP
     return [
         img.crop((0, max(0, int(top - pad)), img.width, min(img.height, int(bottom + pad))))
@@ -160,7 +276,7 @@ def split_grids(img):
     """For each batter row, crop just the strip holding the X grids (the top part
     of the row, to the right of the name) and enlarge it, so the marks are easy
     to count."""
-    edges = row_edges(img.height)
+    edges = row_edges(img)
     left = int(img.width * COUNT_LEFT)
     grids = []
     for top, bottom in zip(edges, edges[1:]):
@@ -174,9 +290,10 @@ def split_grids(img):
 
 def overlay_image(img):
     """The photo with the row cut lines drawn on it in red."""
+    edges = row_edges(img)
     preview = img.copy()
     draw = ImageDraw.Draw(preview)
-    for y in row_edges(preview.height):
+    for y in edges:
         draw.line([(0, y), (preview.width, y)], fill=(255, 0, 0), width=max(3, preview.height // 400))
     return preview
 
@@ -189,6 +306,7 @@ def save_debug_images(img, strips, folder="strips_debug"):
         strip.save(Path(folder) / f"row_{i}.jpg", quality=90)
     for i, grid in enumerate(split_grids(img), start=1):
         grid.save(Path(folder) / f"grid_{i}.jpg", quality=90)
+    print(describe_rows(img))
     print(f"Saved overlay.jpg and {len(strips)} strips to '{folder}'. "
           f"Each red band in the overlay should hold exactly one batter.")
 
@@ -314,6 +432,7 @@ def apply_counts(row, count_result):
 def read_hitting_chart(path, client=None, progress=None):
     """Photo in, result out: cut the chart into rows and read each one."""
     img = load_image(path, ROTATE)
+    print(describe_rows(img))
     grids = split_grids(img) if COUNT_PASS else None
     return extract_rows(client or make_client(), split_into_rows(img), progress, grids)
 
@@ -446,11 +565,20 @@ def print_summary(result, max_warnings=12):
 # ---------------------------------------------------------------------------
 
 def main():
+    global GRID_TOP, GRID_BOTTOM, AUTO_ROWS
     parser = argparse.ArgumentParser(description="Read a handwritten at-bat chart photo.")
     parser.add_argument("image", help="path to the chart photo")
     parser.add_argument("--dry-run", action="store_true",
                         help="cut the photo and save a preview, with no API call and no cost")
+    parser.add_argument("--top", type=float,
+                        help=f"where the first batter row starts, 0 to 1 (default {GRID_TOP})")
+    parser.add_argument("--bottom", type=float,
+                        help=f"where the last batter row ends, 0 to 1 (default {GRID_BOTTOM})")
     args = parser.parse_args()
+    GRID_TOP = args.top if args.top is not None else GRID_TOP
+    GRID_BOTTOM = args.bottom if args.bottom is not None else GRID_BOTTOM
+    if args.top is not None or args.bottom is not None:
+        AUTO_ROWS = False  # you picked the positions yourself
 
     path = Path(args.image)
     if not path.exists():

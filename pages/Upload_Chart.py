@@ -141,12 +141,17 @@ def hitting_settings(path):
         hit.COLUMNS = b.number_input("At-bat boxes per row", 1, 12, hit.COLUMNS)
         hit.ROTATE = c.selectbox("Rotate clockwise (degrees)", [0, 90, 180, 270],
                                  index=[0, 90, 180, 270].index(hit.ROTATE))
-        d, e = st.columns(2)
-        hit.GRID_TOP = d.slider("Where the first batter row starts", 0.0, 0.5, hit.GRID_TOP, 0.005)
-        hit.GRID_BOTTOM = e.slider("Where the last batter row ends", 0.5, 1.0, hit.GRID_BOTTOM, 0.005)
-        st.image(hit.overlay_image(hit.load_image(ROOT / path, hit.ROTATE)),
-                 caption="Each red band should hold exactly one batter. Adjust the sliders "
-                         "until it does. This preview is free.", width=380)
+        hit.AUTO_ROWS = st.checkbox("Find the batter rows automatically", value=hit.AUTO_ROWS,
+                                    help="Straightens a tilted photo and finds the printed row lines. "
+                                         "Turn off to place the rows yourself with the sliders.")
+        if not hit.AUTO_ROWS:
+            d, e = st.columns(2)
+            hit.GRID_TOP = d.slider("Where the first batter row starts", 0.0, 0.5, hit.GRID_TOP, 0.005)
+            hit.GRID_BOTTOM = e.slider("Where the last batter row ends", 0.5, 1.0, hit.GRID_BOTTOM, 0.005)
+        photo = hit.load_image(ROOT / path, hit.ROTATE)
+        st.image(hit.overlay_image(photo), width=380,
+                 caption="Each red band should hold exactly one batter. This preview is free.")
+        st.caption(hit.describe_rows(photo))
 
 
 def hitting_review(state):
