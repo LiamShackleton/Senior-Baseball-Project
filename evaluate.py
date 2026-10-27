@@ -26,7 +26,7 @@ from collections import Counter
 from pathlib import Path
 
 KEY_DIR = Path("answer_keys")
-EXTRACT_DIR = Path("extracted")
+EXTRACT_DIR = Path("extracted")  # change with --extractions
 
 
 def norm(text):
@@ -41,8 +41,9 @@ def to_int(value):
 
 
 def raw_count(ab):
-    """The count the model originally read, before the walk/strikeout correction."""
-    original = ab.get("original_count")
+    """The count from the model's first read, before the zoomed-in recount and
+    before the walk/strikeout correction."""
+    original = ab.get("first_pass_count") or ab.get("original_count")
     if original:
         balls, _, strikes = str(original).partition("-")
         return to_int(balls), to_int(strikes)
@@ -96,7 +97,7 @@ def score_hitting(key, got):
             score.check("counts (after correction)",
                         expected == (gab.get("balls"), gab.get("strikes")),
                         where, "%s-%s" % expected, "%s-%s" % (gab.get("balls"), gab.get("strikes")))
-            score.check("counts (model's own read)", expected == raw_count(gab),
+            score.check("counts (first read only)", expected == raw_count(gab),
                         where, "%s-%s" % expected, "%s-%s" % raw_count(gab))
             score.check("scored", bool(kab.get("scored")) == bool(gab.get("scored")),
                         where, bool(kab.get("scored")), bool(gab.get("scored")))
@@ -191,7 +192,12 @@ def main():
     parser = argparse.ArgumentParser(description="Score extractions against answer keys.")
     parser.add_argument("--make-key", metavar="EXTRACTION_JSON",
                         help="start an answer key from an extraction file")
+    parser.add_argument("--extractions", default="extracted",
+                        help="folder with the extraction files to score (default: extracted). "
+                             "Copy 'extracted' to another folder to compare settings.")
     args = parser.parse_args()
+    global EXTRACT_DIR
+    EXTRACT_DIR = Path(args.extractions)
     if args.make_key:
         make_key(args.make_key)
         return

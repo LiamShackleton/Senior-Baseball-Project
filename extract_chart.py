@@ -38,14 +38,20 @@ GRID_BOTTOM = 0.98  # where the last batter row ends
 OVERLAP = 0.25      # extra image kept above and below each row
 USE_THINKING = True # True = more careful but slower; False = faster and cheaper
 
+# Second look at just the ball/strike X grids, zoomed in, to improve the counts.
+# It adds one more request per batter row. Set COUNT_PASS = False to turn it off.
+COUNT_PASS = True
+COUNT_GRID_HEIGHT = 0.5  # top part of each row band that holds the X grids (0.5 = top half)
+COUNT_LEFT = 0.16        # where the first box starts, as a fraction of the photo's width
+COUNT_UPSCALE = 2.5      # enlarge the grid crop this many times before sending
+
 # ---------------------------------------------------------------------------
 # The prompt: describes YOUR chart notation. Update it if your charts change.
 # ---------------------------------------------------------------------------
 ROW_PROMPT = """
 You are reading ONE horizontal strip cut from a photo of a handwritten
 baseball at-bat chart. It holds a single batter's row. Accuracy matters more
-than speed. Ignore what you see on the edges of the strip; only read the row whose
- name is most fully visible.
+than speed.
 
 LAYOUT
 - The batter's name is at the LEFT edge. To its right are exactly __COLS__
@@ -94,6 +100,35 @@ If a field is unreadable, use null rather than guessing, and say so in "notes".
 """.strip()
 
 
+COUNT_PROMPT = """
+You are counting marks on a zoomed crop of one batter's ball/strike tally grids
+from a handwritten baseball at-bat chart. Accuracy matters more than speed.
+
+LAYOUT
+- The crop shows up to __COLS__ boxes side by side, left to right. Box 1 is the
+  leftmost. Unused boxes at the right are often empty.
+- Each box has a tally grid of small squares in TWO rows. X marks in the TOP
+  row of squares are STRIKES. X marks in the BOTTOM row of squares are BALLS.
+- An X can be drawn large and spill across neighboring squares. Count each
+  separate X once. Do not count printed grid lines.
+- Slivers of other rows may show at the top or bottom edge. Ignore them.
+
+PROCEDURE
+For each box, go left to right. Count the X's in the top row, then the X's in
+the bottom row. Count only what you can see. Do not use any result or guess
+what the count "should" be. A box with an empty grid has 0 and 0. If a count is
+hard to make out, give your best count and set "uncertain": true.
+
+Return ONLY valid JSON (no markdown, no extra text):
+
+{
+  "boxes": [
+    {"column": <1 to __COLS__>, "strikes": <top-row X count>, "balls": <bottom-row X count>, "uncertain": <true or false>}
+  ]
+}
+""".strip()
+
+
 # ---------------------------------------------------------------------------
 # Images
 # ---------------------------------------------------------------------------
@@ -121,6 +156,22 @@ def split_into_rows(img):
     ]
 
 
+def split_grids(img):
+    """For each batter row, crop just the strip holding the X grids (the top part
+    of the row, to the right of the name) and enlarge it, so the marks are easy
+    to count."""
+    edges = row_edges(img.height)
+    left = int(img.width * COUNT_LEFT)
+    grids = []
+    for top, bottom in zip(edges, edges[1:]):
+        height = bottom - top
+        crop = img.crop((left, max(0, int(top - height * 0.05)),
+                         img.width, min(img.height, int(top + height * COUNT_GRID_HEIGHT))))
+        grids.append(crop.resize((round(crop.width * COUNT_UPSCALE),
+                                  round(crop.height * COUNT_UPSCALE)), Image.Resampling.LANCZOS))
+    return grids
+
+
 def overlay_image(img):
     """The photo with the row cut lines drawn on it in red."""
     preview = img.copy()
@@ -136,6 +187,8 @@ def save_debug_images(img, strips, folder="strips_debug"):
     overlay_image(img).save(Path(folder) / "overlay.jpg", quality=90)
     for i, strip in enumerate(strips, start=1):
         strip.save(Path(folder) / f"row_{i}.jpg", quality=90)
+    for i, grid in enumerate(split_grids(img), start=1):
+        grid.save(Path(folder) / f"grid_{i}.jpg", quality=90)
     print(f"Saved overlay.jpg and {len(strips)} strips to '{folder}'. "
           f"Each red band in the overlay should hold exactly one batter.")
 
@@ -193,11 +246,26 @@ def ask_claude(client, img, system_prompt, user_text):
         raise ValueError("Response wasn't valid JSON. Start of it: " + raw[:300])
 
 
-def extract_rows(client, strips, progress=None):
+def extract_rows(client, strips, progress=None, grids=None):
     """Read each batter's strip (a few at a time) and combine the results.
-    progress, if given, is called as progress(rows_done, rows_total)."""
-    print(f"Sending {len(strips)} rows to Claude, 3 at a time...")
+    If grids are given, a second request per row re-counts the X marks.
+    progress, if given, is called as progress(requests_done, requests_total)."""
+    total = len(strips) * (2 if grids else 1)
+    print(f"Sending {total} requests to Claude, 3 at a time...")
     prompt = ROW_PROMPT.replace("__COLS__", str(COLUMNS))
+    count_prompt = COUNT_PROMPT.replace("__COLS__", str(COLUMNS))
+    done = [0]
+
+    def run_all(work, items):
+        results = {}
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            futures = {pool.submit(work, item): item[0] for item in items}
+            for future in as_completed(futures):
+                results[futures[future]] = future.result()
+                done[0] += 1
+                if progress:
+                    progress(done[0], total)
+        return [results[i] for i in sorted(results)]
 
     def read_row(item):
         index, strip = item
@@ -205,24 +273,49 @@ def extract_rows(client, strips, progress=None):
             row = ask_claude(client, strip, prompt, "Extract this batter's row as JSON.")
         except Exception as error:  # one bad row shouldn't lose the whole chart
             row = {"name": f"ROW {index}", "at_bats": [], "extraction_error": str(error)}
-        print(f"  Row {index}/{len(strips)} done", flush=True)
+        print(f"  Row {index} read", flush=True)
         return row
 
-    rows = {}
-    with ThreadPoolExecutor(max_workers=3) as pool:
-        futures = {pool.submit(read_row, item): item[0]
-                   for item in enumerate(strips, start=1)}
-        for done, future in enumerate(as_completed(futures), start=1):
-            rows[futures[future]] = future.result()
-            if progress:
-                progress(done, len(strips))
-    return merge_rows([rows[i] for i in sorted(rows)])
+    def count_row(item):
+        index, grid = item
+        try:
+            return ask_claude(client, grid, count_prompt, "Count the X marks as JSON.")
+        except Exception as error:  # keep the first read's counts for this row
+            print(f"  Row {index}: count pass failed ({error})", flush=True)
+            return None
+
+    rows = run_all(read_row, enumerate(strips, start=1))
+    if grids:
+        counts = run_all(count_row, enumerate(grids, start=1))
+        for row, count in zip(rows, counts):
+            if count:
+                apply_counts(row, count)
+    return merge_rows(rows)
+
+
+def apply_counts(row, count_result):
+    """Use the zoomed-in count for each used box. If it changes the count, the
+    first read is kept in ab["first_pass_count"] so the change is visible."""
+    by_column = {box.get("column"): box for box in count_result.get("boxes", [])}
+    for number, ab in enumerate(row.get("at_bats", [])[:COLUMNS], start=1):
+        box = by_column.get(number)
+        if ab.get("box_blank") or not box:
+            continue
+        before = f"{ab.get('balls')}-{ab.get('strikes')}"
+        for field in ("balls", "strikes"):
+            if box.get(field) is not None:
+                ab[field] = box[field]
+        if f"{ab.get('balls')}-{ab.get('strikes')}" != before:
+            ab["first_pass_count"] = before
+        if box.get("uncertain"):
+            ab["uncertain"] = True
 
 
 def read_hitting_chart(path, client=None, progress=None):
     """Photo in, result out: cut the chart into rows and read each one."""
-    strips = split_into_rows(load_image(path, ROTATE))
-    return extract_rows(client or make_client(), strips, progress)
+    img = load_image(path, ROTATE)
+    grids = split_grids(img) if COUNT_PASS else None
+    return extract_rows(client or make_client(), split_into_rows(img), progress, grids)
 
 
 def fix_count(ab):
@@ -302,8 +395,15 @@ def check_result(result):
                 warnings.append(f"{where}: no result was read")
             if code == "BB" and balls is not None and balls != 4:
                 warnings.append(f"{where}: walk (BB) but {balls} balls")
+            if code == "BB" and strikes is not None and strikes >= 3:
+                warnings.append(f"{where}: walk (BB) but {strikes} strikes")
+            if code != "BB" and balls is not None and balls >= 4:
+                warnings.append(f"{where}: {balls} balls but the result is {code or '?'}, not BB")
             if code == "K" and strikes is not None and strikes < 3:
                 warnings.append(f"{where}: strikeout (K) but {strikes} strikes")
+            if ab.get("first_pass_count"):
+                warnings.append(f"{where}: second count changed {ab['first_pass_count']} to "
+                                f"{ab.get('balls')}-{ab.get('strikes')} (before any BB/K fix)")
             if ab.get("original_count"):
                 warnings.append(f"{where}: count changed from {ab['original_count']} to "
                                 f"{ab.get('balls')}-{ab.get('strikes')} to match the {code}")
