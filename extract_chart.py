@@ -187,43 +187,110 @@ def straighten(img):
     return turned
 
 
+def _line_peaks(profile):
+    """The heavy horizontal lines in the profile, as (position, strength) pairs."""
+    peaks, y = [], 0
+    while y < len(profile):
+        if profile[y] < 0.2:
+            y += 1
+            continue
+        start = y
+        while y < len(profile) and profile[y] >= 0.2:
+            y += 1
+        region = profile[start:y]
+        top = float(region.max())
+        peaks.append((start + float(np.where(region >= 0.9 * top)[0].mean()), top))
+    return sorted(sorted(peaks, key=lambda p: -p[1])[:45])  # the strongest 45, in order
+
+
 def find_row_lines(img):
-    """Find the ROWS + 1 evenly spaced heavy lines that separate the batter rows.
-    Returns (pixel positions, score from 0 to 1, lines clearly seen), or
-    (None, score, 0) if unsure."""
+    """Find the ROWS + 1 heavy lines that separate the batter rows.
+
+    A photo taken at an angle makes the rows a little taller toward the bottom,
+    so the lines are not evenly spaced. This picks the chain of lines whose
+    spacing changes smoothly and which are the heaviest overall, allowing one
+    missed line in the middle and one off the end of the photo.
+    Returns (pixel positions, confidence from 0 to 1, lines clearly seen), or
+    (None, confidence, 0) if unsure."""
     small, scale = _small_gray(img)
     profile = _line_profile(np.asarray(small, dtype=float))
     height = len(profile)
-    near = np.array([profile[max(0, y - 2):y + 3].max() for y in range(height)])  # forgive 2px of wobble
-    best = (None, 0.0, 0)
-    for top in range(int(height * 0.04), int(height * 0.32)):
-        for bottom in range(int(height * 0.78), int(height * 1.12)):
-            pitch = (bottom - top) / ROWS
-            if bottom > height + 0.75 * pitch:
-                continue  # the last row must be mostly in the photo, or the whole grid has slipped down a row
-            positions = np.round(top + pitch * np.arange(ROWS + 1)).astype(int)
-            inside = positions < height
-            # a line in the photo counts for how strong it is; the last line may
-            # be cut off by the photo's edge, which counts for a little
-            score = (near[positions[inside]].sum() + 0.1 * (~inside).sum()) / (ROWS + 1)
-            positions = np.clip(positions, 0, height - 1)
-            if score > best[1]:
-                best = (positions, score, int((near[positions] > 0.25).sum()))
-    if best[0] is None or best[1] < 0.35:
-        return None, best[1], 0
-    # A photo taken at a slight angle makes the rows a little uneven. Nudge each
-    # line to the strongest nearby heavy line, if there is one.
-    positions = best[0].astype(float)
-    pitch = (positions[-1] - positions[0]) / ROWS
-    strength = np.median([near[int(y)] for y in positions])
-    for i, y in enumerate(positions):
-        low, high = max(0, int(y - pitch * 0.2)), min(height, int(y + pitch * 0.2) + 1)
-        if high > low:
-            peak = low + int(np.argmax(profile[low:high]))
-            if profile[peak] >= 0.5 * strength:
-                positions[i] = peak
-    positions = np.maximum.accumulate(positions)  # keep the lines in order
-    return [float(y) / scale for y in positions], best[1], best[2]
+    peaks = _line_peaks(profile)
+    need = ROWS + 1
+    low, high = 0.04 * height, 0.2 * height  # how tall one batter row can be
+    pos = [p for p, _ in peaks]
+    # a "line" right at the photo's edge is usually the edge of the photo or sheet, not a row line
+    strength = [min(s, 0.25) if p < 0.02 * height or p > 0.98 * height else s for p, s in peaks]
+
+    # best[(j, i, m, k)] = (score, previous key): a chain whose last two lines are
+    # peaks i and j, with m rows between them, covering k lines so far.
+    best = {}
+    for i in range(len(peaks)):
+        for j in range(i + 1, len(peaks)):
+            for m in (1, 2, 3):
+                if low <= (pos[j] - pos[i]) / m <= high and 1 + m <= need:
+                    best[(j, i, m, 1 + m)] = (strength[i] + strength[j] - 0.1 * (m - 1), None)
+    for level in range(2, need):  # extend chains covering `level` lines, shortest first
+        for key in [key for key in best if key[3] == level]:
+            score, _ = best[key]
+            j, i, m, k = key
+            unit = (pos[j] - pos[i]) / m
+            for l in range(j + 1, len(peaks)):
+                if pos[l] - pos[j] > 3 * high:
+                    break
+                for m2 in (1, 2, 3):
+                    unit2 = (pos[l] - pos[j]) / m2
+                    if k + m2 > need or not 0.85 <= unit2 / unit <= 1.18:
+                        continue
+                    new = score + strength[l] - 0.1 * (m2 - 1) - 2 * abs(np.log(unit2 / unit))
+                    if new > best.get((l, j, m2, k + m2), (-1e9,))[0]:
+                        best[(l, j, m2, k + m2)] = (new, key)
+
+    def chain_of(key):
+        """The pixel positions of a chain, with any missed lines filled in."""
+        keys = []
+        while key:
+            keys.append(key)
+            key = best[key][1]
+        keys.reverse()
+        j, i, m, _ = keys[0]
+        out = [pos[i]] + [pos[i] + (pos[j] - pos[i]) * t / m for t in range(1, m + 1)]
+        for j, i, m, _ in keys[1:]:
+            out += [pos[i] + (pos[j] - pos[i]) * t / m for t in range(1, m + 1)]
+        return out, len(keys) + 1  # lines, peaks used (at most)
+
+    top_choice = (None, 0.0, 0)
+    for key, (score, _) in best.items():
+        k = key[3]
+        if k < need - 1:
+            continue
+        lines, _ = chain_of(key)
+        if k == need - 1:  # one line is off the end of the chain: add it
+            unit = lines[-1] - lines[-2]
+            first_unit = lines[1] - lines[0]
+            if lines[-1] + unit <= height + 0.75 * unit:
+                lines, score = lines + [lines[-1] + unit], score - 0.15
+            elif lines[0] - first_unit >= -0.5 * first_unit:
+                lines, score = [lines[0] - first_unit] + lines, score - 0.15
+            else:
+                continue
+        if score / need > top_choice[1]:
+            seen = sum(1 for y in lines if 0 <= y < height
+                       and profile[max(0, int(y) - 2):int(y) + 3].max() > 0.25)
+            top_choice = (lines, score / need, seen)
+    lines, confidence, seen = top_choice
+    if lines is None or confidence < 0.25 or seen < ROWS - 2:
+        return None, confidence, 0
+    # A heavy line just past the last row (the edge of the sheet) can pull the whole
+    # chain down a row. If a line about as heavy as the first one sits one row above
+    # it, the chain really starts there.
+    unit = lines[1] - lines[0]
+    first = profile[max(0, int(lines[0]) - 2):int(lines[0]) + 3].max()
+    above = [(abs(p - (lines[0] - unit)), p, s) for p, s in peaks
+             if abs(p - (lines[0] - unit)) < 0.15 * unit and s >= max(0.3, 0.8 * first)]
+    if above:
+        lines = [min(above)[1]] + lines[:-1]
+    return [float(y) / scale for y in lines], confidence, seen
 
 
 def row_edges(img):
@@ -272,15 +339,29 @@ def split_into_rows(img):
     ]
 
 
+def box_left_edge(img, top, bottom):
+    """Where the first at-bat box starts in this row: the heavy vertical line just
+    right of the name column. It moves from row to row when the photo is at an angle.
+    Falls back to COUNT_LEFT if no such line is found."""
+    default = int(img.width * COUNT_LEFT)
+    start, end = int(img.width * 0.08), int(img.width * 0.24)
+    band = img.convert("L").crop((start, int(top), end, int(bottom)))
+    gray = np.asarray(band, dtype=float)
+    dark = gray < 0.55 * np.percentile(gray, 90)
+    thick = dark[:, :-1] & dark[:, 1:]  # ink at least 2 pixels wide
+    tall = np.where(thick.mean(axis=0) >= 0.6)[0]  # runs most of the row's height
+    return start + int(tall.max()) if len(tall) else default
+
+
 def split_grids(img):
     """For each batter row, crop just the strip holding the X grids (the top part
     of the row, to the right of the name) and enlarge it, so the marks are easy
     to count."""
     edges = row_edges(img)
-    left = int(img.width * COUNT_LEFT)
     grids = []
     for top, bottom in zip(edges, edges[1:]):
         height = bottom - top
+        left = max(0, box_left_edge(img, top, bottom) - int(img.width * 0.012))  # keep the border line
         crop = img.crop((left, max(0, int(top - height * 0.05)),
                          img.width, min(img.height, int(top + height * COUNT_GRID_HEIGHT))))
         grids.append(crop.resize((round(crop.width * COUNT_UPSCALE),
