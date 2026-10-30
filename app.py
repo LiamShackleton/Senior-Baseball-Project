@@ -7,6 +7,7 @@ the search box or tick a checkbox. That's why there's no "submit" logic:
 the page simply redraws with whatever the widgets currently say.
 """
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -103,7 +104,7 @@ def hitter_log(pid):
         """,
         (pid,),
     )
-    st.dataframe(pd.DataFrame(rows), use_container_width=True)
+    st.dataframe(pd.DataFrame(rows), width="stretch")
 
 
 # ----- Pitcher stats -----
@@ -165,7 +166,92 @@ def pitch_mix(pid):
     left.caption("Pitches thrown by type")
     left.bar_chart(df["thrown"])
     right.caption("Velocity by type (mph)")
-    right.dataframe(df[["avg_velo", "max_velo"]], use_container_width=True)
+    right.dataframe(df[["avg_velo", "max_velo"]], width="stretch")
+
+
+def pitch_locations(pid):
+    rows = run_query(
+        """
+        SELECT p.location_x, p.location_y, p.pitch_type, p.velocity, a.result
+        FROM pitches p
+        JOIN at_bats a ON p.at_bat_id = a.at_bat_id
+        WHERE a.pitcher_id = %s
+          AND p.location_x IS NOT NULL AND p.location_y IS NOT NULL
+        """,
+        (pid,),
+    )
+    if not rows:
+        st.write("No pitch locations recorded.")
+        return
+    df = pd.DataFrame(rows)
+    df["pitch_type"] = df["pitch_type"].fillna("unknown")
+    for column in ("location_x", "location_y", "velocity"):
+        df[column] = pd.to_numeric(df[column])
+
+    types = sorted(df["pitch_type"].unique())
+    left, right = st.columns([3, 2])
+    chosen = left.multiselect("Pitch types", types, default=types)
+    view = right.radio("View", ["Heatmap", "Dots"], horizontal=True)
+    df = df[df["pitch_type"].isin(chosen)]
+    if df.empty:
+        st.write("Pick at least one pitch type.")
+        return
+
+    heat = view == "Heatmap"
+    # The heatmap uses squares a third of the zone wide, so the strike zone is a
+    # 3 x 3 grid with a ring of squares around it for pitches outside.
+    size = 1 / 3
+    low, high = (-2 * size, 5 * size) if heat else (-0.5, 1.5)
+    span = alt.Scale(domain=[low, high])
+    axis = None if heat else alt.Axis()
+    zone = (
+        alt.Chart(pd.DataFrame({"x0": [0], "x1": [1], "y0": [0], "y1": [1]}))
+        .mark_rect(fillOpacity=0, stroke="black", strokeWidth=2)
+        .encode(x=alt.X("x0:Q", scale=span, title=None, axis=axis), x2="x1:Q",
+                y=alt.Y("y0:Q", scale=span, title=None, axis=axis), y2="y1:Q")
+    )
+
+    if view == "Dots":
+        points = (
+            alt.Chart(df)
+            .mark_circle(size=140, opacity=0.8)
+            .encode(
+                x=alt.X("location_x:Q", scale=span, title=None),
+                y=alt.Y("location_y:Q", scale=span, title=None),
+                color=alt.Color("pitch_type:N", title="Pitch"),
+                tooltip=["pitch_type", "velocity", "result"],
+            )
+        )
+        st.caption("Pitch locations as drawn on the chart. The black box is the strike zone.")
+        st.altair_chart((zone + points).properties(height=420), width="stretch")
+        return
+
+    # Heatmap: count the pitches in each small square of the grid, then color by count.
+    cells = df.assign(
+        x0=(df["location_x"].clip(low, high - 0.001) // size) * size,
+        y0=(df["location_y"].clip(low, high - 0.001) // size) * size,
+    ).groupby(["x0", "y0"]).size().reset_index(name="pitches")
+    cells["x1"], cells["y1"] = cells["x0"] + size, cells["y0"] + size
+    cells["xm"], cells["ym"] = cells["x0"] + size / 2, cells["y0"] + size / 2
+    cells["share"] = (cells["pitches"] / cells["pitches"].sum() * 100).round(0).astype(int).astype(str) + "%"
+
+    grid = alt.Chart(cells)
+    squares = grid.mark_rect().encode(
+        x=alt.X("x0:Q", scale=span, title=None, axis=None), x2="x1:Q",
+        y=alt.Y("y0:Q", scale=span, title=None, axis=None), y2="y1:Q",
+        color=alt.Color("pitches:Q", scale=alt.Scale(scheme="oranges", domainMin=0),
+                        legend=alt.Legend(title="Pitches", tickMinStep=1)),
+        tooltip=[alt.Tooltip("pitches:Q", title="Pitches"), alt.Tooltip("share:N", title="Share")],
+    )
+    counts = grid.mark_text(fontSize=13, fontWeight="bold").encode(
+        x=alt.X("xm:Q", scale=span, axis=None), y=alt.Y("ym:Q", scale=span, axis=None),
+        text="pitches:Q",
+        color=alt.condition(alt.datum.pitches > cells["pitches"].max() * 0.6,
+                            alt.value("white"), alt.value("black")),
+    )
+    st.caption(f"{len(df)} pitches. Each square shows how many landed there. "
+               "The black box is the strike zone, split into 9 squares.")
+    st.altair_chart((squares + counts + zone).properties(width=440, height=440), width="content")
 
 
 def pitcher_results(pid):
@@ -190,20 +276,21 @@ def pitcher_log(pid):
     rows = run_query(
         """
         SELECT g.game_date, a.inning,
-               CONCAT(h.first_name, ' ', h.last_name) AS hitter,
+               COALESCE(NULLIF(TRIM(CONCAT(h.first_name, ' ', h.last_name)), ''),
+                        'not recorded') AS hitter,
                p.sequence_number AS pitch_num, p.pitch_type, p.velocity,
                p.location_x, p.location_y,
                p.balls_before, p.strikes_before, p.result
         FROM pitches p
         JOIN at_bats a ON p.at_bat_id = a.at_bat_id
         JOIN games g   ON a.game_id = g.game_id
-        JOIN players h ON a.hitter_id = h.player_id
+        LEFT JOIN players h ON a.hitter_id = h.player_id
         WHERE a.pitcher_id = %s
         ORDER BY g.game_date, a.inning, a.at_bat_id, p.sequence_number
         """,
         (pid,),
     )
-    st.dataframe(pd.DataFrame(rows), use_container_width=True)
+    st.dataframe(pd.DataFrame(rows), width="stretch")
 
 
 # Label shown on the checkbox -> function that draws it.
@@ -216,6 +303,7 @@ HITTER_STATS = {
 PITCHER_STATS = {
     "Pitching summary": pitching_summary,
     "Pitch mix & velocity": pitch_mix,
+    "Pitch locations": pitch_locations,
     "Results allowed": pitcher_results,
     "Pitch-by-pitch log": pitcher_log,
 }
