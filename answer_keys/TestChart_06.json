@@ -1,0 +1,231 @@
+{
+  "type": "hitting",
+  "batters": [
+    {
+      "name": "Jake",
+      "at_bats": [
+        {
+          "result": "K",
+          "balls": 1,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "F7",
+          "balls": 0,
+          "strikes": 1,
+          "scored": false
+        },
+        {
+          "result": "1B",
+          "balls": 2,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "FC",
+          "balls": 2,
+          "strikes": 1,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Mason",
+      "at_bats": [
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "6-3",
+          "balls": 1,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "2B",
+          "balls": 0,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        }
+      ]
+    },
+    {
+
+      "name": "Eli",
+      "at_bats": [
+        {
+          "result": "HBP",
+          "balls": 1,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "4-3",
+          "balls": 3,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "HR",
+          "balls": 0,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 1,
+          "strikes": 3,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Owen",
+      "at_bats": [
+        {
+          "result": "K",
+          "balls": 0,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 1,
+          "scored": true
+        },
+        {
+          "result": "3B",
+          "balls": 2,
+          "strikes": 2,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Cole",
+      "at_bats": [
+        {
+          "result": "1B",
+          "balls": 0,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "K",
+          "balls": 3,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "P6",
+          "balls": 1,
+          "strikes": 1,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Ty",
+      "at_bats": [
+        {
+          "result": "F9",
+          "balls": 1,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 0,
+          "scored": false
+        },
+        {
+          "result": "K",
+          "balls": 0,
+          "strikes": 4,
+          "scored": false
+        }
+      ]
+    },
+    {
+      "name": "Reed",
+      "at_bats": [
+        {
+          "result": "2B",
+          "balls": 3,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "E6",
+          "balls": 0,
+          "strikes": 1,
+          "scored": false
+        },
+        {
+          "result": "1B",
+          "balls": 1,
+          "strikes": 2,
+          "scored": true
+        }
+      ]
+    },
+    {
+      "name": "Dane",
+      "at_bats": [
+        {
+          "result": "K",
+          "balls": 2,
+          "strikes": 3,
+          "scored": false
+        },
+        {
+          "result": "F8",
+          "balls": 0,
+          "strikes": 2,
+          "scored": false
+        },
+        {
+          "result": "HBP",
+          "balls": 1,
+          "strikes": 0,
+          "scored": true
+        }
+      ]
+    },
+    {
+      "name": "Finn",
+      "at_bats": [
+        {
+          "result": "BB",
+          "balls": 4,
+          "strikes": 2,
+          "scored": true
+        },
+        {
+          "result": "1B",
+          "balls": 1,
+          "strikes": 1,
+          "scored": false
+        },
+        {
+          "result": "3U",
+          "balls": 0,
+          "strikes": 1,
+          "scored": false
+        }
+      ]
+    }
+  ]
+}

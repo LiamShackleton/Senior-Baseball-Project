@@ -1,0 +1,379 @@
+{
+  "source_image": "sample_charts/TestChart_07.png",
+  "layout": {
+    "batter_rows": 9,
+    "columns_with_writing": 4
+  },
+  "batters": [
+    {
+      "name": "Jake",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 1,
+          "result": "F7",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 1,
+          "result": "1B",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 4,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 1,
+          "result": "FC",
+          "scored": false,
+          "uncertain": true
+        }
+      ]
+    },
+    {
+      "name": "Mason",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 2,
+          "result": "BB",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 2,
+          "result": "6-3",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 1,
+          "result": "2B",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 4,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Eli",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 0,
+          "result": "HBP",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 3,
+          "strikes": 2,
+          "result": "4-3",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 1,
+          "result": "HR",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 4,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Owen",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 1,
+          "result": "BB",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 2,
+          "result": "3B",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 4,
+          "box_blank": true,
+          "balls": null,
+          "strikes": null,
+          "result": null,
+          "scored": null,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Cole",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 2,
+          "result": "1B",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 3,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 1,
+          "result": "P6",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 4,
+          "box_blank": true,
+          "balls": null,
+          "strikes": null,
+          "result": null,
+          "scored": null,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Ty",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 2,
+          "result": "F9",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 0,
+          "result": "BB",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 4,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 4,
+          "box_blank": true,
+          "balls": null,
+          "strikes": null,
+          "result": null,
+          "scored": null,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Reed",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 3,
+          "strikes": 2,
+          "result": "2B",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 1,
+          "result": "E6",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 2,
+          "result": "1B",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 4,
+          "box_blank": true,
+          "balls": null,
+          "strikes": null,
+          "result": null,
+          "scored": null,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Dane",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 2,
+          "strikes": 3,
+          "result": "K",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 2,
+          "result": "F8",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 0,
+          "result": "HBP",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 4,
+          "box_blank": true,
+          "balls": null,
+          "strikes": null,
+          "result": null,
+          "scored": null,
+          "uncertain": false
+        }
+      ]
+    },
+    {
+      "name": "Finn",
+      "at_bats": [
+        {
+          "column": 1,
+          "box_blank": false,
+          "balls": 4,
+          "strikes": 2,
+          "result": "BB",
+          "scored": true,
+          "uncertain": false
+        },
+        {
+          "column": 2,
+          "box_blank": false,
+          "balls": 1,
+          "strikes": 1,
+          "result": "1B",
+          "scored": false,
+          "uncertain": false
+        },
+        {
+          "column": 3,
+          "box_blank": false,
+          "balls": 0,
+          "strikes": 1,
+          "result": "3B",
+          "scored": false,
+          "uncertain": true
+        },
+        {
+          "column": 4,
+          "box_blank": true,
+          "balls": null,
+          "strikes": null,
+          "result": null,
+          "scored": null,
+          "uncertain": false
+        }
+      ]
+    }
+  ],
+  "notes": "Row 1: Box 3 diamond is shaded black, so the batter scored. The other diamonds are unshaded. | Row 2: The X's in boxes 1 and 2 sit close together, so the split between the top and bottom rows is slightly ambiguous, but the counts are consistent with the results. | Row 4: The X's above the name line were taken as belonging to Owen's boxes; the text at the very top and the X's at the bottom edge belong to neighboring rows and were ignored. | Row 5: The X grid for Cole's row is the one above his name. The grid and results at the top and bottom edges belong to neighboring rows and were ignored. In box 2 the X's are close together, so the balls/strikes split is slightly uncertain. | Row 6: The X's above the name belong to Ty's row. The X's at the bottom edge belong to the next row and were ignored. Box 3 has 4 strike X's in the top row, which I counted as written. All diamonds look unshaded. | Row 7: The X marks at the bottom of the strip belong to the next batter's row and were ignored. | Row 8: Box 3 diamond appears shaded, so the batter scored. Boxes 4 and 5 are empty. | Row 9: Box 3 result is written like '3U', which I read as a sloppy 3B. The X's in box 1 are close together, so the 4 balls and 2 strikes counts are my best reading."
+}
