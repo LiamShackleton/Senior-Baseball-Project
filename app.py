@@ -7,10 +7,14 @@ the search box or tick a checkbox. That's why there's no "submit" logic:
 the page simply redraws with whatever the widgets currently say.
 """
 
+import hashlib
+import json
+
 import altair as alt
 import pandas as pd
 import streamlit as st
 
+import scouting
 from db import run_query
 
 st.set_page_config(page_title="Baseball Charting", layout="wide")
@@ -293,6 +297,45 @@ def pitcher_log(pid):
     st.dataframe(pd.DataFrame(rows), width="stretch")
 
 
+# ----- Scouting report -----
+
+def scouting_section(player):
+    """A short written report, made by Claude from numbers worked out in code."""
+    st.subheader("🧠 Scouting report")
+    facts = scouting.player_facts(player)
+    if not scouting.has_data(facts):
+        st.write("No charted data for this player yet.")
+        return
+
+    # The key changes when the player's numbers change, so an old report is never
+    # shown next to new data.
+    digest = hashlib.sha1(json.dumps(facts, sort_keys=True).encode()).hexdigest()[:8]
+    key = f"scout_{player['player_id']}_{digest}"
+
+    with st.expander("The numbers the report is written from"):
+        st.json(facts, expanded=2)
+
+    if st.button("Write scouting report", key=f"write_{key}"):
+        try:
+            from extract_chart import make_client
+
+            with st.spinner("Writing the report..."):
+                st.session_state[key] = scouting.generate_report(make_client(), facts)
+        except Exception as error:
+            st.error(f"Couldn't write the report: {error}")
+
+    if key in st.session_state:
+        report = st.session_state[key]
+        st.markdown(report)
+        unknown = scouting.unsupported_numbers(report, facts)
+        if unknown:
+            st.warning("These numbers are in the report but not in the data, so check them "
+                       "before trusting them: " + ", ".join(unknown))
+        else:
+            st.caption("Every number in this report can be found in the data above.")
+        st.caption("Written by Claude from those numbers only. Each press uses one API request.")
+
+
 # Label shown on the checkbox -> function that draws it.
 HITTER_STATS = {
     "Hitting summary": hitting_summary,
@@ -365,6 +408,8 @@ st.caption(
     f'{player["role"].title()} · {player["team"] or "No team"} · '
     f'Bats {player["bats"] or "?"} · Throws {player["throws"] or "?"}'
 )
+
+scouting_section(player)
 
 if not chosen:
     st.write("Tick at least one stat in the sidebar.")
