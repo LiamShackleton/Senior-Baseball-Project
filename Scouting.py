@@ -222,7 +222,7 @@ def generate_report(client, facts):
     response = client.messages.create(
         model=MODEL,
         max_tokens=1500,
-        thinking={"type": "disabled"},
+        thinking={"type": "between_tools"},
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": "Player data:\n" + json.dumps(facts, indent=2)}],
     )
