@@ -242,7 +242,7 @@ def find_row_lines(img):
                     unit2 = (pos[l] - pos[j]) / m2
                     if k + m2 > need or not 0.85 <= unit2 / unit <= 1.18:
                         continue
-                    new = score + strength[l] - 0.1 * (m2 - 1) - 2 * abs(np.log(unit2 / unit))
+                    new = score + strength[l] - 0.1 * (m2 - 1) - 5 * abs(np.log(unit2 / unit))
                     if new > best.get((l, j, m2, k + m2), (-1e9,))[0]:
                         best[(l, j, m2, k + m2)] = (new, key)
 
@@ -281,13 +281,15 @@ def find_row_lines(img):
     lines, confidence, seen = top_choice
     if lines is None or confidence < 0.25 or seen < ROWS - 2:
         return None, confidence, 0
-    # A heavy line just past the last row (the edge of the sheet) can pull the whole
-    # chain down a row. If a line about as heavy as the first one sits one row above
-    # it, the chain really starts there.
+    # A heavy line just past the last row (the edge of the sheet, a table below it)
+    # can pull the whole chain down a row, especially when the top lines are faint
+    # in a photo. If a line sits exactly where one more row above the first line
+    # should be, the chain really starts there.
     unit = lines[1] - lines[0]
+    expected = lines[0] - unit * (unit / (lines[2] - lines[1]))  # rows shrink a little going up
     first = profile[max(0, int(lines[0]) - 2):int(lines[0]) + 3].max()
-    above = [(abs(p - (lines[0] - unit)), p, s) for p, s in peaks
-             if abs(p - (lines[0] - unit)) < 0.15 * unit and s >= max(0.3, 0.8 * first)]
+    above = [(abs(p - expected), p) for p, s in peaks
+             if abs(p - expected) < 0.08 * unit and s >= max(0.2, 0.5 * first)]
     if above:
         lines = [min(above)[1]] + lines[:-1]
     return [float(y) / scale for y in lines], confidence, seen
@@ -421,7 +423,7 @@ def make_client():
 def ask_claude(client, img, system_prompt, user_text):
     """Send one image plus instructions; return the parsed JSON answer."""
     # Thinking tokens count toward max_tokens, so leave room for both.
-    max_tokens, thinking = (16000, {"type": "adaptive"}) if USE_THINKING else (4096, {"type": "disabled"})
+    max_tokens, thinking = (16000, {"type": "adaptive"}) if USE_THINKING else (4096, {"type": "between_tools"})
     response = client.messages.create(
         model=MODEL,
         max_tokens=max_tokens,
